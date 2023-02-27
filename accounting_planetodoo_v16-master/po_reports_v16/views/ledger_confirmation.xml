@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="action_ledger_confirm_report_pdf" model="ir.actions.report">
+        <field name="name">Partner Ledger Confirm</field>
+        <field name="model">ledger.confirm</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">po_reports_v16.report_ledger_confirm</field>
+        <field name="report_file">po_reports_v16.report_ledger_confirm</field>
+        <field name="binding_type">report</field>
+    </record>
+
+       <record id="action_ledger_confirmation_view" model="ir.actions.server">
+        <field name="name">Ledger Confirm</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = record.ledger_confirm()</field>
+    </record>
+    <!--    Report Content-->
+
+    <template id="report_ledger_confirm">
+        <t t-call="web.html_container">
+            <!--        <t t-foreach="docs" t-as="doc">-->
+            <t t-call="po_reports_v16.partner_ledger_account_pdf"/>
+            <!--        </t>-->
+        </t>
+    </template>
+    <template id="partner_ledger_account_pdf">
+        <t t-call="po_reports_v16.custom_ledger_confirm">
+            <div class="page">
+                <style>
+                    .vertical {
+                    border-left: 1px solid black;
+                    height: 700px
+                    }
+                </style>
+
+                <div>
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width 50%" class="text-left">Dear Sir/Madam,</td>
+                            <td style="width 50%" class="text-right">Date : <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%b-%Y')"/></td>
+                        </tr>
+                    </table>
+                    <table style="width:100%">
+                        <tr>
+                            <td class="text-center">
+                                <strong>Sub: Confirmation of Accounts</strong>
+                                <br/>
+                                <span t-esc="data['start_date']"/>
+                                to
+                                <span t-esc="data['end_date']"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%">
+                        <tr>
+                            <td class="text-left">
+                                Given below is the details of your Accounts as standing in my/our Books of Accounts for
+                                the above mentioned period.
+                                <br/>
+                                <br/>
+                                Kindly return 3 copies stating your I.T. Permanent A/c No., duly signed and sealed, in
+                                confirmation of the same. Please note that if no reply is received from you within a
+                                fortnight, it will be assumed that you have accepted the balance shown below
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width: 100%;">
+                        <tr>
+                        <td style="width:50%; vertical-align: top">
+                            <table style="width:100%; border:1px solid black;border-collapse: collapse;">
+                                <tr>
+                                    <td class="text-center" style="width:20%;text-align:top;border:1px solid black;">
+                                        Date
+                                    </td>
+                                    <td class="text-center" style="width:50%; text-align:top;border:1px solid black;">
+                                        Particular
+                                    </td>
+                                    <td class="text-center" style="width:30%; text-align:top;border:1px solid black;">
+                                        Debit Amount
+                                    </td>
+                                </tr>
+                                <tr t-foreach="payment_data" t-as="d" style="font-size: 14px;">
+                                    <td style="border-bottom:1px solid black;width:20%;" class="text-right">
+                                        <span t-esc="d[1]"/>
+                                    </td>
+                                    <td style="border-bottom:1px solid black;width:50%;" class="text-right">
+                                        <span t-esc="d[0]"/>
+                                    </td>
+                                    <td style="border-bottom:1px solid black;width:30%;" class="text-right">
+                                        <span t-esc="d[2]" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </td>
+<!--                            <td>-->
+<!--                                <div class= "vertical" />-->
+<!--                            </td>-->
+
+                        <td style="width:50%;vertical-align: top">
+                            <table style="width:100%; border:1px solid black;border-collapse: collapse;">
+                                <tr>
+                                    <td class="text-center" style="width:20%;text-align:top;border:1px solid black;">
+                                        Date
+                                    </td>
+                                    <td class="text-center" style="width:50%; text-align:top;border:1px solid black;">
+                                        Particular
+                                    </td>
+                                    <td class="text-center" style="width:30%; text-align:top;border:1px solid black;">
+                                        Credit Amount
+                                    </td>
+                                </tr>
+                                <tr t-foreach="invoice_data" t-as="i" style="font-size: 14px;">
+                                    <td style="border-bottom:1px solid black;width:20%;" class="text-right">
+                                        <span t-esc="i[1]"/>
+                                    </td>
+                                    <td style="border-bottom:1px solid black;width:50%;" class="text-right">
+                                        <span t-esc="i[0]"/>
+                                    </td>
+                                    <td style="border-bottom:1px solid black;width:30%;" class="text-right">
+                                        <span t-esc="i[2]" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width:50%;border:1px solid black;">
+                                <span style="text-decoration:underline;float: right;" t-esc="payment_total" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td style="width:50%;border:1px solid black;">
+                                <span style="text-decoration:underline;float: right;" t-esc="invoice_total" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </t>
+
+    </template>
+    <!--     header template -->
+    <template id="external_layout_standard_ledger">
+        <!--         this is for header part  -->
+        <div t-attf-class="header o_company_#{company.id}_layout">
+            <div class="o_boxed_header"/>
+            <table style="width:100%">
+                <tr>
+                    <td style="width:8% ;vertical-align:top" class="text-left">
+                        <span>To :</span>
+                    </td>
+                    <t t-foreach="request.env['res.partner'].search([('id', '=', data['partner_id'])])" t-as="doc">
+                        <td style="width:42%;vertical-align:top" class="text-left">
+                            <span style="font-size: 13px">
+                                <b>
+                                    <span style="font-size: 14px" t-field="doc.name"/>
+                                </b>
+                                <br/>
+                                <span t-field="doc.street"/>,<span t-field="doc.street2"/>,
+                                <span t-field="doc.city"/>-<span t-field="doc.zip"/>,
+                                <span t-field="doc.state_id"/>,
+                                <span t-field="doc.country_id"/>
+                                <br/>
+                                <i class="fa fa-phone icon-small"/> -
+                                <span t-esc="doc.phone"/>,
+                                <i class="fa fa-envelope-o icon-small"/> -
+                                <span t-esc="doc.email"/>
+                                <br/>
+                                <b>GST-</b>
+                                <span t-field="doc.vat"/>
+                            </span>
+                        </td>
+                    </t>
+                    <td style="width:8%; vertical-align:top" class="text-left">
+                        <span>From :</span>
+                    </td>
+                    <td style="width:42%" class="text-left">
+                        <span style="font-size: 13px">
+                            <b><span style="font-size: 14px" t-esc="request.env.company.name"/></b>
+                            <br/>
+                            <span t-esc="request.env.company.street"/>,<span t-esc="request.env.company.street2"/>.
+                                <span t-esc="request.env.company.city"/>-<span t-esc="request.env.company.zip"/>, <span t-esc="request.env.company.state_id.name"/>,<span t-esc="request.env.company.country_id.name"/>
+                            <br/>
+                            <i class="fa fa-phone icon-small"/> -
+                            <span t-esc="request.env.company.phone"/>,
+                            <i class="fa fa-envelope-o fa-fw"/> -
+                            <span t-esc="request.env.company.email"/>
+                            <br/>
+                            <b>GSTIN/UIN :</b> <span t-esc="request.env.company.vat"/>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"
+             t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
+             t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <div class="o_boxed_header"/>
+            <t t-raw="0"/>
+        </div>
+        <!--         this is for footer part -->
+        <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+            <div class="text-center" style="border-top: 1px solid black;">
+                <table style="width:100%">
+                    <tr>
+                        <td style=" " class="text-left">I/We hereby confirm the above</td>
+                        <td style="float:right;" class="text-right">Yours faithfully,</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </template>
+    <!--     template  -->
+    <template id="custom_ledger_confirm">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+        <t t-if="not company">
+            <!--   Multicompany   -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+        <t t-call="po_reports_v16.external_layout_standard_ledger">
+            <t t-raw="0"/>
+        </t>
+    </template>
+</odoo>

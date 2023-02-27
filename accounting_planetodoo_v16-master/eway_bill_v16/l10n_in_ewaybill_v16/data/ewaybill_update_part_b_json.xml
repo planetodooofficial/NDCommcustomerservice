@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="l10n_in_ewaybill_update_part_b_json">
+    {
+        "ewbNo": <t t-esc="transaction.ewaybill_number"/>,
+
+        <t t-if="document.l10n_in_ewaybill_mode == '0'">
+            "transporterId": "<t t-esc="document.l10n_in_ewaybill_transporter_id.vat"/>",
+        </t>
+
+        <t t-if="document.l10n_in_ewaybill_mode != '0'">
+
+            "transMode": "<t t-esc="document.l10n_in_ewaybill_mode"/>",
+            "fromPlace": "<t t-esc="transaction.from_place or document.l10n_in_ewaybill_ship_from.city"/>",
+            "fromState": <t t-esc="int(transaction.from_state_id.l10n_in_tin or document.l10n_in_ewaybill_ship_from.state_id.l10n_in_tin)"/>,
+            "reasonCode": "<t t-esc="transaction.reason_code"/>",
+
+            <t t-if="transaction.reason_remark">
+                "reasonRem": "<t t-esc="transaction.reason_remark"/>",
+            </t>
+
+            <t t-if="document.l10n_in_ewaybill_mode == '1'">
+                "vehicleNo": "<t t-esc="document.l10n_in_ewaybill_vehicle_no"/>",
+            </t>
+
+            <t t-if="document.l10n_in_ewaybill_mode in ('2', '3', '4')">
+                "transDocNo": "<t t-esc="document.l10n_in_ewaybill_transporter_doc_no"/>",
+                "transDocDate": "<t t-esc="document.l10n_in_ewaybill_transporter_doc_date.strftime('%d/%m/%Y')"/>",
+            </t>
+
+        </t>
+    }
+    </template>
+</odoo>

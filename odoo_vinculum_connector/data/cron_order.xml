@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <data noupdate="0">
+        <record id="invoice_update_cron" model="ir.cron">
+            <field name="name">Invoice Update Cron Job (Vinculum)</field>
+            <field name="model_id" ref="model_shop_instance"/>
+            <field name="state">code</field>
+            <field name="code">model.update_invoice_crone()</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>hours</field>
+            <field name="numbercall">-1</field>
+        </record>
+
+        <record id="update_sale_order_cron" model="ir.cron">
+            <field name="name">Update Sale Order Cron Job (Vinculum)</field>
+            <field name="model_id" ref="model_shop_instance"/>
+            <field name="state">code</field>
+            <field name="code">model.update_sale_order_crone()</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>hours</field>
+            <field name="numbercall">-1</field>
+        </record>
+    </data>
+</odoo>

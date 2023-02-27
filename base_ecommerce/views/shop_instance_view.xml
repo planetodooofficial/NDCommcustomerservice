@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_shop_instance_tree" model="ir.ui.view">
+        <field name="name">shop.instance.tree</field>
+        <field name="model">shop.instance</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="instance_name"/>
+                <field name="instance_url" widget="url"/>
+                <field name="instance_username"/>
+                <field name="instance_type"/>
+                <field name="last_import_date"/>
+<!--                <field name="company_id" optional="hide"/>-->
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shop_instance_form" model="ir.ui.view">
+        <field name="name">shop.instance.form</field>
+        <field name="model">shop.instance</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="import_order" string="Import Order(s)" type="object" class="oe_highlight"/>
+                    <button name="action_confirm" string="Confirm" type="object" class="oe_highlight"
+                    attrs="{'invisible': [('instance_status', '=', 'confirm')]}"/>
+                    <button name="action_reset_to_draft" string="Reset To Draft" type="object" class="oe_highlight"
+                    attrs="{'invisible': [('instance_status', '=', 'draft')]}" groups="base_ecommerce.group_reset_to_draft_button"/>
+                    <field name="instance_status" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="instance_name" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+                            <field name="instance_url" widget="url" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+                            <field name="instance_username" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+                            <field name="instance_password" password="True" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+                            <field name="instance_type" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+                            <field name="last_import_date" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+<!--                            <field name="company_id" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>-->
+                            <field name="is_active" attrs="{'readonly': [('instance_status', '=', 'confirm')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Shop Sales Channels" name="shop_sales_channels">
+                            <field name="shop_sales_channel_ids" attrs="{'readonly': [('instance_status', '=', 'confirm')]}">
+                                <tree editable="bottom">
+                                    <field name="seller_id"/>
+                                    <field name="name"/>
+                                    <field name="brand_id"/>
+                                    <field name="warehouse_id" optional="hide"/>
+                                    <field name="stock_location_id" optional="hide"/>
+                                    <field name="sales_journal_id" optional="hide"/>
+                                    <field name="company_id" optional="hide"/>
+                                    <field name="is_consumable_product" optional="hide"/>
+                                    <field name="confirm_orders" optional="hide"/>
+                                    <field name="confirm_delivery_orders" optional="hide"/>
+                                    <field name="confirm_invoices" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Import Logs" name="import_logs">
+                            <field name="shop_import_logs_ids" readonly="True">
+                                <tree editable="bottom" default_order="start_date desc">
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="no_of_records"/>
+                                    <field name="operation_performed"/>
+                                    <field name="status"/>
+                                    <field name="log_exception"/>
+                                    <field name="company_id"/>
+                                    <button type="object" name="open_imported_order" string="View Orders" class="btn btn-outline-info btn-sm"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!--chatter-->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_shop_instance" model="ir.actions.act_window">
+        <field name="name">Shop Instances</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">shop.instance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Instance.
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_shop_instance"
+              name="Shop Instances"
+              action="action_shop_instance"
+              parent="base_ecommerce.menu_settings_root"
+              sequence="10"/>
+
+</odoo>

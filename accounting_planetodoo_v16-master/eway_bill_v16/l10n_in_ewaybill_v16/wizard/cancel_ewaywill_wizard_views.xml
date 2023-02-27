@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cancel_ewaybill" model="ir.ui.view">
+        <field name="name">Cancel Eway Bill</field>
+        <field name="model">l10n.in.ewaybill.cancel</field>
+        <field name="arch" type="xml">
+            <form string="Cancel Eway Bill">
+                <group>
+                    <field name="reason_code" required="1"/>
+                    <field name="cancel_remark" attrs="{'invisible': [('reason_code', '!=', '4')], 'required': [('reason_code', '=', '4')]}"/>
+                </group>
+                <footer>
+                    <button type="object" name="action_cancel_ewaybill" string="Cancel Eway Bill" default_focus="1" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

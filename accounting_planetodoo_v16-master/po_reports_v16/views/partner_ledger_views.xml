@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+        <record id="partner_ledger_wizard_report" model="ir.ui.view">
+        <field name="name">partner.ledger.wizard.report</field>
+        <field name="model">partner.ledger</field>
+        <field name="arch" type="xml">
+            <form string="Partner Ledger">
+                <group>
+                    <group>
+                        <field name="start_date" required="1"/>
+                        <field name="partner_id" readonly="1" force_save="1" attrs="{'invisible' : [('partner_id', '=', False)]}"/>
+                    </group>
+                    <group>
+                        <field name="end_date" required="1"/>
+                        <field name="type" invisible="1"/>
+                        <field name="journal_id" string="Journal" options="{'no_create': True,'no_open': True, 'no_edit': True}" attrs="{'required': [('type', 'in', ['sales_register','purchase_register','detail_purchase_register','detail_sales_register'])],
+                        'invisible' : [('type', 'not in', ['sales_register','purchase_register','detail_purchase_register','detail_sales_register'])]}" domain="[('type', '=', context.get('journal_type'))]" widget="many2many_tags" />
+                    </group>
+                </group>
+
+                <footer>
+                    <button name="print_report" type="object" string="Download" class="oe_highlight"/>
+                    <button string="Cancel" class="btn btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="paperformat_hi_fab" model="report.paperformat">
+            <field name="name">A4hf1</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">42</field>
+            <field name="margin_bottom">23</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">42</field>
+            <field name="dpi">90</field>
+        </record>
+
+
+    <record id="action_report_partner_ledger_pdf" model="ir.actions.report">
+        <field name="name">Partner Ledger</field>
+        <field name="model">partner.ledger</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">po_reports_v16.po_report_pdf</field>
+        <field name="report_file">po_reports_v16.po_report_pdf</field>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_hi_fab"/>
+    </record>
+
+
+    <template id="po_report_pdf">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="text-left">
+                    <h3 class="text-center">Partner Ledger </h3>
+                    <t t-foreach="request.env['res.partner'].search([('id', '=', data['partner_id'])])" t-as="prd">
+                        <strong>Name: </strong><span t-field="prd.name"/><br/>
+                        <strong>Address: </strong><span t-field="prd.street"/>
+                    </t>
+                        <p><strong>Date: </strong><span t-esc="data['start_date']" t-options="{'widget': 'date'}"/>  <strong> - </strong><span t-esc="data['end_date']" t-options="{'widget': 'date'}"/></p>
+                    </div>
+                </div>
+                <table class="table table-sm" name="account_lines_table" style="border-bottom:1px solid black;">
+                        <tr style="border-bottom:1px solid black;">
+                            <td style="border-bottom:1px solid black;"><strong>Date</strong></td>
+                            <td style="border-bottom:1px solid black;"><strong>Voucher#</strong></td>
+                            <td style="border-bottom:1px solid black;"><strong>Account</strong></td>
+                            <td style="border-bottom:1px solid black;"><strong>SO NO</strong></td>
+<!--                            <td style="border-bottom:1px solid black;"><strong>PO NO</strong></td>-->
+                            <td style="border-bottom:1px solid black;"><strong>Description</strong></td>
+                            <td style="border-bottom:1px solid black;" class="text-right"><strong>Debit</strong></td>
+                            <td style="border-bottom:1px solid black;" class="text-right"><strong>Credit</strong></td>
+                            <td style="border-bottom:1px solid black;" class="text-right"><strong>Balance</strong></td>
+                        </tr>
+                    <tbody>
+                         <t t-set="rb" t-value="0"/>
+                         <t t-set="debi" t-value="0"/>
+                         <t t-set="crei" t-value="0"/>
+                        <tr t-foreach="openbal" t-as="rec">
+                           <strong>
+                               <td style="border-bottom:1px solid black;" colspan="8" class="text-left"><strong>Opening Balance</strong></td>
+                           </strong>
+                           <td style="border-bottom:1px solid black;" class="text-right"><strong><span t-esc="rec['opening_bal']"/></strong></td>
+                           <t t-if="rec['opening_bal']">
+                                <t t-set="rb" t-value="rb + rec['opening_bal']"/>
+                           </t>
+                        </tr>
+                       <tr t-foreach="dat" t-as="d" style="font-size: 13px;" >
+                           <t t-set="rb" t-value="rb + d['debit'] - d['credit'] "/>
+                           <t t-set="debi" t-value="debi + d['debit']"/>
+                           <t t-set="crei" t-value="crei + d['credit']"/>
+                           <td style="border-bottom:1px solid black;" class="text-left"><span t-esc="d['date']" t-options="{'widget': 'date'}"/></td>
+                           <td style="border-bottom:1px solid black;" class="text-left"><span t-esc="d['doc_no']"/></td>
+                           <td style="border-bottom:1px solid black;" class="text-left"><span t-esc="d['gl_account']"/></td>
+                           <td style="border-bottom:1px solid black;" class="text-left"><span t-esc="d['so_num']"/></td>
+<!--                           <td style="border-bottom:1px solid black;" class="text-left"><span t-esc="d['po_num']"/></td>-->
+                           <td class="text-left" style="border-bottom:1px solid black;"><span t-esc="d['line_desc']"/></td>
+                           <td style="border-bottom:1px solid black;" class="text-right"><t t-esc="'{0:,.0f}'.format(int(d['debit']))"/></td>
+                           <td style="border-bottom:1px solid black;" class="text-right"><t t-esc="'{0:,.0f}'.format(int(d['credit']))"/></td>
+                           <td style="border-bottom:1px solid black;" class="text-right"><t t-esc="'{0:,.0f}'.format(int(rb))"/></td>
+                        </tr>
+                        <tr style="border-top:1px solid #000;">
+                            <td  style="border-bottom:1px solid black;" colspan="6" class="text-left"><strong>Closing Balance</strong></td>
+                            <td  style="border-bottom:1px solid black;" class="text-right"><strong><t t-esc="'{0:,.0f}'.format(int(debi))"/></strong></td>
+                            <td  style="border-bottom:1px solid black;" class="text-right"><strong><t t-esc="'{0:,.0f}'.format(int(crei))"/></strong></td>
+                            <td  style="border-bottom:1px solid black;" class="text-right"><strong><t t-esc="'{0:,.0f}'.format(int(rb))"/></strong></td>
+                        </tr>
+                    </tbody>
+                  </table>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_sale_partner_ledger" model="ir.actions.server">
+        <field name="name">Partner Ledger</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = record.sale_partner_ledger()</field>
+    </record>
+
+    <record id="action_detail_sales_register" model="ir.actions.act_window">
+        <field name="name">Detailed Sales Register</field>
+        <field name="res_model">partner.ledger</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_id': False, 'default_type': 'detail_sales_register', 'move_type': 'sales','journal_type':'sale'}</field>
+    </record>
+
+    <record id="action_sales_register" model="ir.actions.act_window">
+        <field name="name">Sales Register</field>
+        <field name="res_model">partner.ledger</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_id': False, 'default_type': 'sales_register','move_type': 'sales', 'journal_type':'sale'}</field>
+    </record>
+
+    <menuitem id="menu_detail_register_report" name="Detail Sales Register" parent="account.menu_finance_receivables" action="action_detail_sales_register" sequence="150" />
+    <menuitem id="menu_register_report" name="Sales Register" parent="account.menu_finance_receivables" action="action_sales_register" sequence="150" />
+
+<!--    Purchase Register-->
+
+
+    <record id="action_detail_purchase_register" model="ir.actions.act_window">
+        <field name="name">Detailed Purchase Register</field>
+        <field name="res_model">partner.ledger</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_id': False, 'default_type': 'detail_purchase_register','move_type': 'purchase','journal_type':'purchase'}</field>
+    </record>
+
+    <record id="action_purchase_register" model="ir.actions.act_window">
+        <field name="name">Purchase Register</field>
+        <field name="res_model">partner.ledger</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_partner_id': False, 'default_type': 'purchase_register','move_type': 'purchase', 'journal_type':'purchase'}</field>
+    </record>
+
+    <menuitem id="menu_detail_purchase_report" name="Detail Purchase Register" parent="account.menu_finance_payables" action="action_detail_purchase_register" sequence="150" />
+    <menuitem id="menu_purchase_report" name="Purchase Register" parent="account.menu_finance_payables" action="action_purchase_register" sequence="150" />
+</odoo>

@@ -1,0 +1,43 @@
+.invoice_list_class {
+    border-collapse: collapse;
+    margin: 25xp 0;
+    font-size: 0.9cm;
+    font-family: sans-serif;
+    min-width:400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.invoice_list_class thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.invoice_list_class table th,
+.invoice_list_class table td {
+     padding: 12xp 15xp;
+
+}
+.invoice_list_class table tbody tr {
+    border-bottom: 1xp solid #dddddd;
+
+}
+.invoice_list_class table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+
+}
+.invoice_list_class table tbody tr:last-of-type {
+    border-bottom: 2xp solid #009879;
+
+}
+.invoice_list_class table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+
+}
+
+.invoice_list_class table thead > tr > tr:nth-child(3) {
+    width: 150px;
+    text-align: center;
+}

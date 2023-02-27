@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="cancellation_filter_view" model="ir.actions.act_window">
+            <field name="name">Cancellation Requested</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('cancellation', '=', True)]</field>
+        </record>
+
+    <menuitem id="menu_cancel"
+              name="Cancellation Requested"
+              action="cancellation_filter_view"
+              parent="sale.sale_order_menu"/>
+    
+
+</odoo>

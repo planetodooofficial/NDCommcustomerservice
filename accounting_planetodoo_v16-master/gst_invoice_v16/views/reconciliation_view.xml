@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="reconciliation_tool_form" model="ir.ui.view">
+            <field name="name">reconciliation.tool.form</field>
+            <field name="model">reconciliation.tool</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Reconciliation">
+                    <header>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" class="oe_inline" readonly='1'/>
+                        </h1>
+                        <group >
+                            <group col="2">
+                                <field name="from_period_id" required="1"/>
+                                <field name="to_period_id" required="1"/>
+                                <field name="journal_id" required="1" options="{'no_open': True, 'no_edit': True, 'no_create': True}" domain="[('type', '=', 'purchase')]"/>
+                                <field name="select_p_inv"/>
+                            </group>
+                            <group>
+                                <field name="reconciled_inv"/>
+                                <field name="missing_odoo"/>
+                                <field name="missing_file"/>
+                                <field name="partial_matched"/>
+                            </group>
+                        </group>
+                        <button name="%(upload_reconciliation_action_wizard)d" string="Upload File" type="action" class="btn-success" style="margin-right:5px;margin-bottom:5px;" icon="fa-get-pocket" />
+                        <notebook>
+                            <page id="gst_invoice_tab" string="Reconciled Invoice">
+                                <field name="invoice_lines" widget="many2many" >
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="currency_id"/>
+                                        <field name="amount_total_signed"/>
+                                        <field name="inr_total"/>
+                                        <field name="invoice_date"/>
+                                        <field name="date"/>
+                                        <field name="state"/>
+                                        <field name="move_type"/>
+                                        <field name="gst_status"/>
+                                        <field name="invoice_type"/>
+                                        <field name="reconciled"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page id="missing_file_tab" string="INV Missing In File">
+                                <field name="missing_in_file_invoice_lines" >
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="currency_id"/>
+                                        <field name="amount_total_signed"/>
+                                        <field name="inr_total"/>
+                                        <field name="invoice_date"/>
+                                        <field name="date"/>
+                                        <field name="state"/>
+                                        <field name="move_type"/>
+                                        <field name="gst_status"/>
+                                        <field name="invoice_type"/>
+                                        <field name="reconciled"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page id="missing_odoo_tab" string="Missing In Odoo">
+                                <field name="reconciliation_missing_odoo_line_ids">
+                                    <tree>
+                                        <field name="linked_date"/>
+                                        <field name="linked_invoice_id"/>
+                                        <field name="linked_vendor_id"/>
+                                        <field name="file_date"/>
+                                        <field name="file_invoice"/>
+                                        <field name="file_vendor"/>
+                                        <field name="file_amt"/>
+                                        <field name="inv_amt"/>
+                                        <field name="diff_amt"/>
+                                        <button name="action_reconcile_recorde" type="object" string="Reconcile" class="btn btn-link" icon="fa-history" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page id="partial_matched_tab" string="Partial Matched">
+                                <field name="reconciliation_partial_line_ids" >
+                                    <tree>
+                                        <field name="linked_date"/>
+                                        <field name="linked_invoice_id"/>
+                                        <field name="linked_vendor_id"/>
+                                        <field name="file_date"/>
+                                        <field name="file_invoice"/>
+                                        <field name="file_vendor"/>
+                                        <field name="file_amt"/>
+                                        <field name="inv_amt"/>
+                                        <field name="diff_amt"/>
+                                        <button name="action_reconcile_recorde" type="object" string="Reconcile" class="btn btn-link" icon="fa-history" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="reconciliation_tool_tree" model="ir.ui.view">
+            <field name="name">reconciliation.tool.tree</field>
+            <field name="model">reconciliation.tool</field>
+            <field name="arch" type="xml">
+                <tree string="GSTR" default_order='create_date desc'>
+                    <field name="name"/>
+                    <field name="create_date" />
+                    <field name="from_period_id" />
+                    <field name="to_period_id"/>
+                    <field name="journal_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_reconciliation_filter" model="ir.ui.view">
+            <field name="name">reconciliation.tool.select</field>
+            <field name="model">reconciliation.tool</field>
+            <field name="arch" type="xml">
+                <search string="GST Invoice">
+                    <field name="name" string="Reconciliation No" filter_domain="[('name','ilike',self)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Journal" name="filter_by_journal"  context="{'group_by':'journal_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="reconciliation_tool_list_action_gst" model="ir.actions.act_window">
+            <field name="name">Reconciliation Tool</field>
+            <field name="res_model">reconciliation.tool</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="reconciliation_tool_tree"/>
+            <field name="search_view_id" ref="view_reconciliation_filter"/>
+        </record>
+
+        <record id="action_reconciliation_tool_tree_view" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="reconciliation_tool_tree"/>
+            <field name="act_window_id" ref="reconciliation_tool_list_action_gst"/>
+        </record>
+
+        <record id="action_reconciliation_tool_form_view" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="reconciliation_tool_form"/>
+            <field name="act_window_id" ref="reconciliation_tool_list_action_gst"/>
+        </record>
+
+
+    </data>
+</odoo>

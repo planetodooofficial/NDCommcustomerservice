@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_shop_import_logs_tree" model="ir.ui.view">
+        <field name="name">shop.import.logs.tree</field>
+        <field name="model">shop.import.logs</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" create="false" edit="false" default_order="start_date desc">
+                <field name="shop_instance_id" readonly="True"/>
+                <field name="start_date" readonly="True"/>
+                <field name="end_date" readonly="True"/>
+                <field name="no_of_records" readonly="True"/>
+                <field name="operation_performed" readonly="True"/>
+                <field name="status" readonly="True"/>
+                <field name="log_exception" readonly="True"/>
+                <field name="company_id" optional="hide"/>
+                <button type="object" name="open_imported_order" string="View Orders" class="btn btn-outline-info btn-sm"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="action_shop_import_logs" model="ir.actions.act_window">
+        <field name="name">Shop Import Logs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">shop.import.logs</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Log.
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_shop_import_logs_root"
+              name="Shop Import Logs"
+              parent="base_ecommerce.menu_shop_sales_channel_root"
+              sequence="10"/>
+    <menuitem id="menu_shop_import_logs"
+              name="Shop Import Logs"
+              action="action_shop_import_logs"
+              parent="base_ecommerce.menu_shop_import_logs_root"
+              sequence="0"/>
+
+</odoo>

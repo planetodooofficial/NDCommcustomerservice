@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="l10n_in_ewaybill_transaction_tree" model="ir.ui.view">
+        <field name="name">l10n.in.ewaybill.transaction.tree</field>
+        <field name="model">l10n.in.ewaybill.transaction</field>
+        <field name="arch" type="xml">
+            <tree name="eWayBills">
+                <field name="create_date"/>
+                <field name="ewaybill_number"/>
+                <field name="ewaybill_valid_upto"/>
+                <field name="request_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="l10n_in_ewaybill_transaction_form" model="ir.ui.view">
+        <field name="name">l10n.in.ewaybill.transaction.form</field>
+        <field name="model">l10n.in.ewaybill.transaction</field>
+        <field name="arch" type="xml">
+            <form name="eWayBill">
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+
+                    </div>
+                    <group>
+                        <group>
+                            <field name="ewaybill_number"/>
+                            <field name="ewaybill_valid_upto"/>
+                        </group>
+                        <group name="source_document">
+                            <field name="move_id"/>
+                        </group>
+                    </group>
+
+                    <group colspan="4" string="Request">
+                        <label for="request_json" colspan="4"/>
+                        <field name="request_json" nolabel="1"/>
+                    </group>
+
+                    <group colspan="4" string="Response">
+                        <field name="response_json" nolabel="1"/>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ewaybill_list" model="ir.actions.act_window">
+        <field name="name">eWayBills</field>
+        <field name="res_model">l10n.in.ewaybill.transaction</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+payment.reconci.marketplace.wizard,payment.reconci.marketplace.wizard,odoo_vinculum_connector.model_payment_reconci_marketplace_wizard,base.group_user,1,1,1,1
+cod.remittance.reconci.wizard,cod.remittance.reconci.wizard,odoo_vinculum_connector.model_cod_remittance_reconci_wizard,base.group_user,1,1,1,1
+payment.gateway.reconci.wizard,payment.gateway.reconci.wizard,odoo_vinculum_connector.model_payment_gateway_reconci_wizard,base.group_user,1,1,1,1
+shipped.returned.order.wizard,shipped.returned.order.wizard,odoo_vinculum_connector.model_shipped_returned_order_wizard,base.group_user,1,1,1,1
+stock.for.vinculum.wizard,stock.for.vinculum.wizard,odoo_vinculum_connector.model_stock_for_vinculum_wizard,base.group_user,1,1,1,1
+locations.code,locations.code,odoo_vinculum_connector.model_locations_code,base.group_user,1,1,1,1
+import.order.vinculum.files.wizard,import.order.vinculum.files.wizard,odoo_vinculum_connector.model_import_order_vinculum_files_wizard,base.group_user,1,1,1,1

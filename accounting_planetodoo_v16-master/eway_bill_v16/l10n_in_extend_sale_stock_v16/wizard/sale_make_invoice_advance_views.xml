@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_advance_payment_l10n_in_extend_inv" model="ir.ui.view">
+        <field name="name">Invoice Orders Warring</field>
+        <field name="model">sale.advance.payment.inv</field>
+        <field name="inherit_id" ref="sale.view_sale_advance_payment_inv"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='count']" position="after">
+                <field name="has_different_wh_address" invisible="1"/>
+            </xpath>
+            <xpath expr="//p[last()]" position="after">
+                <div class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                     attrs="{'invisible': [('has_different_wh_address','!=', True)]}">
+                     <b>For E-invoice</b> (ignore if invoice is not applicable for E-invoice):
+                     <li>
+                        <b>Dispatch address</b> is not auto filled because selected sale order have <b>different warehouse addresses</b>.
+                     </li>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

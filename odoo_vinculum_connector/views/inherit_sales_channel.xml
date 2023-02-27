@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="shop_sales_channel_inherit_vin_form" model="ir.ui.view">
+        <field name="name">shop.sales.channel.inherit.vin.form</field>
+        <field name="model">shop.sales.channel</field>
+        <field name="inherit_id" ref="base_ecommerce.view_shop_sales_channel_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='seller_id']" position="after">
+                <field name="location_code_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_shop_sales_channel_inherit_tree" model="ir.ui.view">
+        <field name="name">shop.sales.channel.inherit.tree</field>
+        <field name="model">shop.sales.channel</field>
+        <field name="inherit_id" ref="base_ecommerce.view_shop_sales_channel_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='seller_id']" position="after">
+                <field name="location_code_id"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

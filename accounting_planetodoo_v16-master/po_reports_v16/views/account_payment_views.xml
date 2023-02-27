@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="payment_invoice_form_inherit" model="ir.ui.view">
+        <field name="name">payment.invice.form.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <field name="account_payment_line_ids" widget="one2many"  attrs="{'readonly':[('state', '!=', 'draft')]}"    >
+                    <tree string="Invoice" editable="bottom" class="po_report.invoice_list_class" >
+                        <field name="invoice_id"/>
+                        <field name="partner_id"/>
+                        <field name="amt"  sum="Total Due" />
+                        <field name="amt_paid"  sum="Total Paid" />
+                        <field name="currency_id" options="{'no_create': True, 'no_open': True}" required="1" groups="base.group_multi_currency"/>
+                        <field name="payment_type" invisible="1"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

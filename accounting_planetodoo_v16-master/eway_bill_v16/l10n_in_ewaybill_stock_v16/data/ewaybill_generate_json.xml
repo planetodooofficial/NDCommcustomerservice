@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="l10n_in_ewaybill_stock_generate_json" inherit_id="l10n_in_ewaybill_v16.l10n_in_ewaybill_generate_json">
+        <xpath expr="//t[@name='invoice_line_fields']" position="after">
+            <t t-if="is_picking">
+                <t t-if="line.description_picking">
+                    "productDesc": "<t t-esc="line.description_picking"/>",
+                </t>
+                "quantity": <t t-esc="line.quantity_done"/>,
+                "qtyUnit": "<t t-esc="line.product_uom.l10n_in_code and line.product_id.uom_id.l10n_in_code.split('-')[0] or 'OTH'"/>",
+            </t>
+        </xpath>
+    </template>
+</odoo>

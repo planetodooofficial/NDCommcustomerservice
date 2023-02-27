@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="purchase_order_form_inherited" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherited</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="send_for_checking" type="object" string="Send For Checking" attrs="{'invisible':['|','|',('to_check','=',True),('is_checked','=',True),('state','in',('purchase','lock','cancel'))]}"
+                            groups="po_accounting_v16.group_purchase_maker"/>
+                    <button name="button_set_checked" type="object" string="Set As Checked"
+                            attrs="{'invisible':['|','|',('to_check','=',False),('is_checked','=',True),('state','not in',('draft','sent_to_check'))]}"
+                            groups="po_accounting_v16.group_purchase_checker"/>
+                </xpath>
+                <xpath expr="//button[@id='draft_confirm']" position="attributes">
+                    <attribute name="states"/>
+                </xpath>
+                <xpath expr="//button[@id='bid_confirm']" position="attributes">
+                    <attribute name="states"/>
+                </xpath>
+                <xpath expr="//form//group[1]/group[2]" position="inside">
+                    <field name="to_check" invisible="1"/>
+                    <field name="is_checked" readonly="1"/>
+                </xpath>
+                <xpath expr="//page[@name='purchase_delivery_invoice']" position="before">
+                    <page name="payment_by_terms" string="Payments By Terms" attrs="{'invisible':[('state','not in',('purchase','done'))]}">
+                        <field name="payments_by_terms">
+                            <tree>
+                                <field name="sequence" widget="handle"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="name"/>
+                                <field name="percent"/>
+                                <field name="value" widget="monetary"/>
+                                <field name="due_date"/>
+                                <field name="payment_recv_date"/>
+                                <field name="amount_received" widget="monetary"/>
+                                <button name="open_create_payment_wizard" type="object" string="Create Payment"/>
+                                <button name="view_payments" type="object" string="View Payments" attrs="{'invisible':[('amount_received','=',0)]}"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//notebook/page/field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                    <field name="hsn_id" optional="hide" options="{'no_create': True, 'no_open': False, 'no_edit': True}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

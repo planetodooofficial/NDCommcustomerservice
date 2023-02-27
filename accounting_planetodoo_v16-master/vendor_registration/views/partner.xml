@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="inherited_res_partner" model="ir.ui.view">
+        <field name="name">inherited.res.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group/group[1]/field[@name='vat']" position="after">
+                <field name="is_approved"/>
+                <field name="cancelled_cheque" filename="check_file_name" force_save="1"/>
+                <field name="pan_card" filename="pan_file_name" force_save="1"/>
+                <field name="pan_file_name" invisible="1" force_save="1"/>
+                <field name="check_file_name" invisible="1" force_save="1"/>
+                <field name="gst_doc" filename="gst_doc_name" force_save="1"/>
+                <field name="gst_doc_name" invisible="1" force_save="1"/>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='category_id']" position="after">
+                <field name="pan_no"/>
+                <field name="is_msme"/>
+                <field name="msme_doc" attrs="{'invisible': [('is_msme','=','no')]}"/>
+                <field name="entity_type"/>
+                <field name="iec_number"/>
+                <field name="cin"/>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[1]/field[@name='vat']" position="attributes">
+                <attribute name="string">GST No</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

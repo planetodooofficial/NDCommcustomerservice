@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_payment_form_reconcile" model="ir.ui.view">
+        <field name="name">Payment Reconcile</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_reconcile_lines" type="object" class="oe_stat_button" string="Reconcile" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                <button name="send_for_checking" string="Send For Checking" type="object" groups="po_accounting_v16.group_payments_maker" attrs="{'invisible':['|','|',('to_check','=',True),('is_checked','=',True),('state','!=','draft')]}"/>
+                <button name="button_set_checked" string="Set As Checked" type="object" groups="po_accounting_v16.group_payments_checker" attrs="{'invisible':['|',('to_check','=',False),('is_checked','=',True)]}"/>
+            </xpath>
+            <xpath expr="//group[@name='group2']" position="inside">
+                <field name="is_advance"/>
+                <field name="to_check" invisible="1"/>
+                <field name="is_checked" readonly="1"/>
+                <field name="checker_id" groups="base.group_erp_manager" readonly="1"/>
+                <field name="pending_amt" invisible="1"/>
+            </xpath>
+            <xpath expr="//group[last()]" position="after">
+                <notebook>
+                    <label for="partial_lines" string="Against Invoice Ref" attrs="{'invisible':[('payment_type','!=','inbound')]}"/>
+                    <label for="partial_lines" string="Against Bill Ref" attrs="{'invisible':[('payment_type','!=','outbound')]}"/>
+                    <page string="Reconcile" >
+                        <field name="partial_lines" context="{'default_partner_id': partner_id}" nolabel="1">
+                            <tree editable="bottom" >
+                                <field name="payment_id" invisible="1"/>
+                                <field name="reconciled_id" invisible="1"/>
+                                <field name="partner_id" invisible="1"/>
+                                <field name="move_id" option="{'no_create': True, 'no_edit': True}" attrs="{'readonly': [('reconciled_id', '!=', False)]}" options="{'no_create': True, 'no_create_edit': True}" domain="[('state','=','posted'),('partner_id','=',parent.partner_id)]"/>
+                                <field name="move_amt" force_save="1" />
+                                <field name="residual_amount" force_save="1"/>
+                                <field name="amount" attrs="{'readonly': [('reconciled_id', '!=', False)]}" sum="Total Amount"/>
+                                <button name="button_undo_reconciliation" type="object" attrs="{'invisible': [('reconciled_id', '=', False)]}" string="Revert reconciliation" icon="fa-undo"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Advances" attrs="{'invisible': ['|', ('is_advance', '=', False), ('partner_id', '=', False)]}">
+                        <field name="advance_order_ids" context="{'default_partner_id': partner_id}">
+                            <tree editable="bottom">
+                                <field name="payment_id" invisible="1"/>
+                                <field name="sale_id" domain="[('partner_id', '=', partner_id)]" attrs="{'column_invisible': [('parent.payment_type', '!=', 'inbound')], 'required': [('parent.payment_type', '=', 'inbound')]}" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="purchase_id" domain="[('partner_id', '=', partner_id)]" attrs="{'column_invisible': [('parent.payment_type', '!=', 'outbound')], 'required': [('parent.payment_type', '=', 'outbound')]}" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="payment_terms"/>
+                                <field name="order_amount"/>
+                                <field name="advance_amount"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

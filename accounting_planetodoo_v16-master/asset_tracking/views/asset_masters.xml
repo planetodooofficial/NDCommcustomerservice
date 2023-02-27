@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="asset_tag_tree" model="ir.ui.view">
+            <field name="name">asset.tag.tree</field>
+            <field name="model">asset.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Tags" default_order='create_date' editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="asset_type_tree" model="ir.ui.view">
+            <field name="name">asset.type.tree</field>
+            <field name="model">asset.type</field>
+            <field name="arch" type="xml">
+                <tree string="Asset Types" default_order='create_date' editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="asset_tag_action" model="ir.actions.act_window">
+            <field name="name">Asset Tags</field>
+            <field name="res_model">asset.tag</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <record id="asset_type_action" model="ir.actions.act_window">
+            <field name="name">Asset Types</field>
+            <field name="res_model">asset.type</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id="menu_asset_tags" name="Asset Tags" parent="account.account_management_menu" sequence="6" action="asset_tag_action" />
+        <menuitem id="menu_asset_types" name="Asset types" parent="account.account_management_menu" sequence="7" action="asset_type_action" />
+    </data>
+</odoo>

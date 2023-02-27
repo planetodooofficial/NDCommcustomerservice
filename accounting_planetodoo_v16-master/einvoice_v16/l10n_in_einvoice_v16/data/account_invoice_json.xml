@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="l10n_in_invoice_request_payload_json">
+        {
+        <t t-set="move" t-value="invoice.move_id"/>
+        <t t-set="seller_details" t-value="move.journal_id.l10n_in_gstin_partner_id or move.journal_id.company_id.partner_id"/>
+        <t t-set="buyer_details" t-value="move.partner_id.commercial_partner_id"/>
+        <t t-set="dispatch_details" t-value="move.journal_id.l10n_in_gstin_partner_id or move.journal_id.company_id.partner_id or move.dispatch_partner_id"/>
+        <t t-set="ship_to_details" t-value="'partner_shipping_id' in move and move.partner_shipping_id or move.partner_id"/>
+        <t t-set="lines" t-value="move.invoice_line_ids.filtered(lambda l: l.display_type in ('tax','product'))"/>
+        <t t-set="taxes_amount" t-value="move.with_context({'is_in_company_currency': True}).tax_amount_by_lines"/>
+        <t t-set="taxes_amount_values" t-value="taxes_amount.values()"/>
+        <t t-set="amount_sign" t-value="move.is_inbound() and -1 or 1"/>
+        <t t-set="taxes_rate" t-value="move.tax_rate_by_lines"/>
+        "Version": "1.1",
+        "TranDtls": {
+        "TaxSch": "GST",
+        "SupTyp": "<t t-esc="invoice._get_supply_type(move)"/>",
+        "RegRev": "<t t-esc="any(mv.tax_line_id.l10n_in_reverse_charge for mv in move.line_ids) and 'Y' or 'N'"/>",
+        "IgstOnIntra": "<t t-esc="'Y' if move.l10n_in_state_id.id == move.journal_id.l10n_in_gstin_partner_id.state_id.id and sum(tax_amount.get('IGST') or 0.00 for tax_amount in taxes_amount_values) else 'N'"/>"
+        },
+        "DocDtls": {
+        "Typ": "<t t-esc="move.move_type == 'out_refund' and 'CRN' or move.move_type == 'in_refund' and 'DBN' or 'INV'"/>",
+        "No": "<t t-esc="move.name"/>",
+        "Dt": "<t t-esc="move.invoice_date.strftime('%d/%m/%Y')"/>"
+        },
+        "SellerDtls": {
+        <t t-if="seller_details.vat">
+            "Gstin": "<t t-esc="seller_details.vat"/>",
+        </t>
+        <t t-if="seller_details.name">
+            "LglNm": "<t t-esc="seller_details.name"/>",
+        </t>
+        <t t-if="seller_details.name">
+            "TrdNm": "<t t-esc="seller_details.name"/>",
+        </t>
+        <t t-if="seller_details.street">
+            "Addr1": "<t t-esc="seller_details.street"/>",
+        </t>
+        <t t-if="seller_details.street2">
+            "Addr2": "<t t-esc="seller_details.street2"/>",
+        </t>
+        <t t-if="seller_details.city">
+            "Loc": "<t t-esc="seller_details.city"/>",
+        </t>
+        <t t-if="seller_details.zip">
+            "Pin": <t t-esc="seller_details.zip"/>,
+        </t>
+        <t t-if="seller_details.state_id.l10n_in_tin">
+            "Stcd": "<t t-esc="seller_details.state_id.l10n_in_tin"/>",
+        </t>
+        <t t-if="seller_details.phone">
+            "Ph": "<t t-esc="invoice._extract_digits(seller_details.phone)"/>",
+        </t>
+        <t t-if="seller_details.email">
+            "Em": "<t t-esc="seller_details.email"/>"
+        </t>
+        },
+        "BuyerDtls": {
+        "Gstin": "<t t-esc="move.l10n_in_gst_treatment in ('overseas','deemed_export') and 'URP' or buyer_details.vat"/>",
+        <t t-if="buyer_details.name">
+            "LglNm": "<t t-esc="buyer_details.name"/>",
+        </t>
+        <t t-if="buyer_details.name">
+            "TrdNm": "<t t-esc="buyer_details.name"/>",
+        </t>
+        "Pos": "<t t-esc="move.l10n_in_state_id.l10n_in_tin"/>",
+        <t t-if="buyer_details.street">
+            "Addr1": "<t t-esc="buyer_details.street"/>",
+        </t>
+        <t t-if="buyer_details.street2">
+            "Addr2": "<t t-esc="buyer_details.street2"/>",
+        </t>
+        <t t-if="buyer_details.city">
+            "Loc": "<t t-esc="buyer_details.city"/>",
+        </t>
+        <t t-if="buyer_details.zip">
+            "Pin": <t t-esc="move.l10n_in_gst_treatment in ('overseas','deemed_export') and '999999' or buyer_details.zip"/>,
+        </t>
+        <t t-if="buyer_details.state_id.l10n_in_tin or move.l10n_in_state_id.l10n_in_tin">
+            "Stcd": "<t t-esc="buyer_details.state_id.l10n_in_tin or move.l10n_in_state_id.l10n_in_tin"/>",
+        </t>
+        <t t-if="buyer_details.phone">
+            "Ph": "<t t-esc="invoice._extract_digits(buyer_details.phone)"/>",
+        </t>
+        <t t-if="buyer_details.email">
+            "Em": "<t t-esc="buyer_details.email"/>"
+        </t>
+        },
+        "DispDtls": {
+        <t t-if="dispatch_details.name">
+            "Nm": "<t t-esc="dispatch_details.name"/>",
+        </t>
+        <t t-if="dispatch_details.street">
+            "Addr1": "<t t-esc="dispatch_details.street"/>",
+        </t>
+        <t t-if="dispatch_details.street2">
+            "Addr2": "<t t-esc="dispatch_details.street2"/>",
+        </t>
+        <t t-if="dispatch_details.city">
+            "Loc": "<t t-esc="dispatch_details.city"/>",
+        </t>
+        <t t-if="dispatch_details.zip">
+            "Pin": <t t-esc="dispatch_details.zip"/>,
+        </t>
+        <t t-if="dispatch_details.state_id.l10n_in_tin">
+            "Stcd": "<t t-esc="dispatch_details.state_id.l10n_in_tin"/>"
+        </t>
+        },
+        "ShipDtls": {
+        <t t-if="ship_to_details.vat">
+            "Gstin": "<t t-esc="move.l10n_in_gst_treatment in ('overseas','deemed_export') and 'URP' or ship_to_details.vat"/>",
+        </t>
+        <t t-if="ship_to_details.commercial_company_name or ship_to_details.name">
+            "LglNm": "<t t-esc="ship_to_details.commercial_company_name or ship_to_details.name"/>",
+        </t>
+        <t t-if="ship_to_details.commercial_company_name or ship_to_details.name">
+            "TrdNm": "<t t-esc="ship_to_details.commercial_company_name or ship_to_details.name"/>",
+        </t>
+        <t t-if="ship_to_details.street">
+            "Addr1": "<t t-esc="ship_to_details.street"/>",
+        </t>
+        <t t-if="ship_to_details.street2">
+            "Addr2": "<t t-esc="ship_to_details.street2"/>",
+        </t>
+        <t t-if="ship_to_details.city">
+            "Loc": "<t t-esc="ship_to_details.city"/>",
+        </t>
+        <t t-if="ship_to_details.zip">
+            "Pin": <t t-esc="move.l10n_in_gst_treatment in ('overseas','deemed_export') and '999999' or ship_to_details.zip"/>,
+        </t>
+        <t t-if="ship_to_details.state_id.l10n_in_tin or move.l10n_in_state_id.l10n_in_tin">
+            "Stcd": "<t t-esc="ship_to_details.state_id.l10n_in_tin or move.l10n_in_state_id.l10n_in_tin"/>"
+        </t>
+        },
+        <t t-set="line_count" t-value="1"/>
+        "ItemList": [
+        <t t-foreach="lines" t-as="line">
+            {
+            "SlNo": "<t t-esc="line_count"/>",
+            "PrdDesc": "<t t-esc="line.name.replace('\n', '')"/>",
+            "IsServc": "<t t-esc="'Y' if line.product_id.type == 'service' else 'N'"/>",
+            "HsnCd": "<t t-esc="invoice._extract_digits(line.product_id.l10n_in_hsn_code)"/>",
+            <t t-if="line.product_id.barcode">
+                "Barcde": "<t t-esc="line.product_id.barcode"/>",
+            </t>
+            "Qty": <t t-esc="round(line.quantity or 0.0, 2)"/>,
+            "FreeQty": <t t-esc="round(line.balance == 0.00 and line.quantity or 0.0 , 2)"/>,
+            "Unit": "<t t-esc="line.product_uom_id.l10n_in_code and line.product_uom_id.l10n_in_code.split('-')[0] or 'OTH'"/>",
+            "UnitPrice": <t t-esc="round(((line.balance / (1- (line.discount/100)))/line.quantity) * amount_sign, 2)"/>,
+            "TotAmt": <t t-esc="round((line.balance / (1- (line.discount/100))) * amount_sign, 2)"/>,
+            "Discount": <t t-esc="round(((line.balance / (1- (line.discount/100))) - line.balance) * amount_sign, 2)"/>,
+            "AssAmt": <t t-esc="round(line.balance * amount_sign, 2)"/>,
+            "GstRt": <t t-esc="round(taxes_rate[line.id].get('SGST', 0.0) + taxes_rate[line.id].get('CGST', 0.0) + taxes_rate[line.id].get('IGST', 0.0) + taxes_rate[line.id].get('UTGST', 0.0), 2)"/>,
+            "IgstAmt": <t t-esc="round(taxes_amount[line.id].get('IGST', 0.0), 2)"/>,
+            "CgstAmt": <t t-esc="round(taxes_amount[line.id].get('CGST', 0.0), 2)"/>,
+            "SgstAmt": <t t-esc="round(taxes_amount[line.id].get('SGST', 0.0), 2) or round(taxes_amount[line.id].get('UTGST', 0.0), 2)"/>,
+            "CesRt": <t t-esc="round(taxes_rate[line.id].get('CESS', 0.0), 2)"/>,
+            "CesAmt": <t t-esc="round(taxes_amount[line.id].get('CESS', 0.0), 2)"/>,
+            "CesNonAdvlAmt": <t t-esc="round(taxes_amount[line.id].get('CESS-NON-ADVOL', 0.0), 2)"/>,
+            "StateCesRt": <t t-esc="round(taxes_rate[line.id].get('STATE CESS', 0.0), 2)"/>,
+            "StateCesAmt": <t t-esc="round(taxes_amount[line.id].get('STATE CESS', 0.0), 2)"/>,
+            "StateCesNonAdvlAmt": <t t-esc="round(taxes_amount[line.id].get('STATE CESS-NON-ADVOL', 0.0), 2)"/>,
+            "OthChrg": <t t-esc="round(taxes_amount[line.id].get('OTHER', 0.0), 2)"/>,
+            "TotItemVal": <t t-esc="round((line.balance * amount_sign) + sum(taxes_amount[line.id].values()), 2)"/>,
+            <t t-if="'intrastat_origin_country_id' in line.product_id and line.product_id.intrastat_origin_country_id">
+                "OrgCntry": "<t t-esc="line.product_id.intrastat_origin_country_id.code"/>",
+            </t>
+            },
+            <t t-set="line_count" t-value="line_count + 1"/>
+        </t>
+        ],
+        "ValDtls": {
+        "AssVal": <t t-esc="round(sum(lines.mapped('balance')) * amount_sign, 2)"/>,
+        "CgstVal": <t t-esc="round(sum(tax_amount.get('CGST') or 0.00 for tax_amount in taxes_amount_values), 2)"/>,
+        <!--        "SgstVal": <t t-esc="round(sum(tax_amount.get('SGST') or 0.00 for tax_amount in taxes_amount_values), 2)"/>,-->
+        "SgstVal": <t t-esc="round(sum(tax_amount.get('SGST') or tax_amount.get('UTGST') or 0.00 for tax_amount in taxes_amount_values), 2)"/>,
+        "IgstVal": <t t-esc="round(sum(tax_amount.get('IGST') or 0.00 for tax_amount in taxes_amount_values), 2)"/>,
+        "CesVal": <t t-esc="round(sum(tax_amount.get('CESS') or 0.00 for tax_amount in taxes_amount_values) + sum(tax_amount.get('CESS-NON-ADVOL') or 0.00 for tax_amount in taxes_amount_values), 2)"/>,
+        "StCesVal": <t t-esc="round(sum(tax_amount.get('STATE CESS') or 0.00 for tax_amount in taxes_amount_values) + sum(tax_amount.get('STATE CESS-NON-ADVOL') or 0.00 for tax_amount in taxes_amount_values), 2)"/>,
+        "Discount": 0,
+        "OthChrg": 0,
+        "RndOffAmt": <t t-esc="round((invoice.get_round_off_value(move) or 0.00), 2)"/>,
+        "TotInvVal": <t t-esc="round(sum(move.line_ids.filtered(lambda line: line.account_id.account_type not in ('asset_receivable', 'liability_payable')).mapped('balance')) * amount_sign, 2)"/>,
+        <t t-if="move.currency_id and move.company_id.currency_id != move.currency_id">
+            "TotInvValFc": <t t-esc="round(move.amount_total, 2)"/>
+        </t>
+        },
+        <t t-if="move.l10n_in_gst_treatment in ('overseas','special_economic_zone','deemed_export')">
+            "ExpDtls": {
+            <t t-if="move.l10n_in_shipping_bill_number">
+                "ShipBNo": "<t t-esc="move.l10n_in_shipping_bill_number"/>",
+            </t>
+            <t t-if="move.l10n_in_shipping_bill_date">
+                "ShipBDt": "<t t-esc="move.l10n_in_shipping_bill_date.strftime('%d/%m/%Y')"/>",
+            </t>
+            <t t-if="move.l10n_in_shipping_port_code_id">
+                "Port": "<t t-esc="move.l10n_in_shipping_port_code_id.code"/>",
+            </t>
+            "RefClm": "<t t-esc="'Y' if sum(tax_amount.get('IGST') or 0.00 for tax_amount in taxes_amount_values) else 'N'"/>",
+            <t t-if="move.currency_id">
+                "ForCur": "<t t-esc="move.currency_id.name"/>",
+            </t>
+            <t t-if="buyer_details.country_id">
+                "CntCode": "<t t-esc="buyer_details.country_id.code"/>",
+            </t>
+            },
+        </t>
+        }
+    </template>
+</odoo>

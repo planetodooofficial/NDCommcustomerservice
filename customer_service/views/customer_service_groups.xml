@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+<!--            Tracking team category-->
+    <record id="tracking_team" model="ir.module.category">
+        <field name="name">Tracking Team</field>
+    </record>
+
+    <record id="tracking_group" model="res.groups">
+        <field name="name">Tracking Team</field>
+        <field name="category_id" ref="tracking_team"/>
+    </record>
+
+<!--    Customer Experience category-->
+    <record id="customer_experience" model="ir.module.category">
+        <field name="name">Customer Experience</field>
+    </record>
+
+    <record id="customer_experience_group" model="res.groups">
+        <field name="name">Customer Experience Group</field>
+        <field name="category_id" ref="customer_experience"/>
+    </record>
+
+<!--    Order Processing-->
+    <record id="order_processing" model="ir.module.category">
+        <field name="name">Order Processing</field>
+    </record>
+
+    <record id="order_processing_group" model="res.groups">
+        <field name="name">Order Processing Group</field>
+        <field name="category_id" ref="order_processing"/>
+    </record>
+
+    <!--    Warehouse-->
+    <record id="warehouse" model="ir.module.category">
+        <field name="name">Warehouse</field>
+    </record>
+
+    <record id="warehouse_group" model="res.groups">
+        <field name="name">Warehouse Group</field>
+        <field name="category_id" ref="warehouse"/>
+    </record>
+
+        <!--RVP Team-->
+    <record id="rvp_team" model="ir.module.category">
+        <field name="name">RVP Team</field>
+    </record>
+
+    <record id="rvp_team_group" model="res.groups">
+        <field name="name">RVP Team Group</field>
+        <field name="category_id" ref="rvp_team"/>
+    </record>
+
+    <!--Management-->
+    <record id="management" model="ir.module.category">
+        <field name="name">Management</field>
+    </record>
+
+    <record id="management_group" model="res.groups">
+        <field name="name">Management</field>
+        <field name="category_id" ref="management"/>
+    </record>
+
+        <!--Tech-->
+    <record id="tech" model="ir.module.category">
+        <field name="name">Tech</field>
+    </record>
+
+    <record id="tech_group" model="res.groups">
+        <field name="name">Tech</field>
+        <field name="category_id" ref="tech"/>
+    </record>
+
+<!--    Coupon code - Anushri-->
+    <record id="coupon_group" model="ir.module.category">
+        <field name="name">Coupon code</field>
+    </record>
+
+    <record id="coupon_code_group" model="res.groups">
+        <field name="name">Coupon code</field>
+        <field name="category_id" ref="coupon_group"/>
+    </record>
+
+</odoo>

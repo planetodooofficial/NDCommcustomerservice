@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_update_part_b" model="ir.ui.view">
+        <field name="name">Update Part-B</field>
+        <field name="model">l10n.in.ewaybill.update.partb</field>
+        <field name="arch" type="xml">
+            <form string="Update Part-B">
+                <group>
+                    <field name="mode" required="1"/>
+                    <field name="reason_code" attrs="{'invisible': [('mode', '=', '0')], 'required': [('mode', '!=', '0')]}"/>
+                    <field name="vehicle_no" attrs="{'invisible': [('mode', '!=', '1')], 'required': [('mode', '=', '1')]}"/>
+                    <field name="transporter_doc_no" attrs="{'invisible': [('mode', 'not in', ('2', '3', '4'))], 'required': [('mode', 'in', ('2', '3', '4'))]}"/>
+                    <field name="transporter_doc_date" attrs="{'invisible': [('mode', 'not in', ('2', '3', '4'))], 'required': [('mode', 'in', ('2', '3', '4'))]}"/>
+                    <field name="reason_remark" attrs="{'invisible': [('reason_code', '!=', '3')], 'required': [('reason_code', '=', '3')]}"/>
+                    <field name="transporter_id" attrs="{'invisible': [('mode', '!=', '0')], 'required': [('mode', '=', '0')]}" domain="[('vat','!=',False),('country_id.code','=','IN')]"/>
+                    <field name="from_place" attrs="{'invisible': [('mode', '=', '0')]}"/>
+                    <field name="from_state_id" attrs="{'invisible': [('mode', '=', '0')]}"/>
+                </group>
+                <footer>
+                    <button type="object" name="action_ewaybill_update_part_b" string="Update" default_focus="1" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="gstinunit_data_form" model="ir.ui.view">
+        <field name="name">view.gstinunit.data.form</field>
+        <field name="model">gstinunit.data</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="gstin_o2m" widget="one2many">
+                        <tree editable="=bottom">
+                            <field name="gstin_id"/>
+                            <field name="code"/>
+                        </tree>
+                    </field>
+                </group>
+                <group>
+                    <group>
+                        <field name="sale_taxes" widget="many2many_tags" domain="[('is_a_default','=',True),('type_tax_use','=','sale')]"/>
+                    </group>
+                    <group>
+                        <field name="po_taxes" widget="many2many_tags" domain="[('is_a_default','=',True),('type_tax_use','=','purchase')]"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="journal_ids" widget="many2many_tags" domain="[('is_a_default','=',True)]"/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Create" class="btn-primary" name="create_gstin_unit_data" type="object"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_gstinunit_data" model="ir.actions.act_window">
+        <field name="name">Create GSTIN Unit Data</field>
+        <field name="res_model">gstinunit.data</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="gstinunit_data_form"/>
+    </record>
+
+    <menuitem id="menu_gstin_data_wiz" name="GSTIN Data" action="action_create_gstinunit_data"
+              parent="account.menu_finance_entries_actions"/>
+</odoo>

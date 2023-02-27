@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_gateway_reconci_wizard_form" model="ir.ui.view">
+        <field name="name">payment.gateway.reconci.wizard.form</field>
+        <field name="model">payment.gateway.reconci.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="shop_instance_id" domain="[('instance_type.shortdesc', '=', 'Amazon_File_Import')]"/>
+                        <field name="company_id"/>
+                        <field name="upload_file"/>
+                        <field name="download_format" widget="url"/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_import" string="Import Order(s)" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="btn btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_payment_gateway_reconci" model="ir.actions.act_window">
+        <field name="name">Payment Gateway Reconciliation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">payment.gateway.reconci.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_shop_payment_gateway_reconci"
+              name="Payment Gateway Reconciliation"
+              action="action_payment_gateway_reconci"
+              parent="odoo_vinculum_connector.menu_mkt_root"
+              sequence="10"/>
+
+</odoo>

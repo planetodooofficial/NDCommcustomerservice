@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="l10n_in_ewaybill_cancel_json">
+    {
+        "ewbNo": <t t-esc="transaction.ewaybill_number"/>,
+        "cancelRsnCode": <t t-esc="transaction.cancel_reason_code"/>,
+        <t t-if="transaction.cancel_reason_code">
+            "cancelRmrk": "<t t-esc="transaction.cancel_remark"/>"
+        </t>
+    }
+    </template>
+</odoo>

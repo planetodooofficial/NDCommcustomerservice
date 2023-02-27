@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_extend_ewaybill" model="ir.ui.view">
+        <field name="name">Extend Eway Bill</field>
+        <field name="model">l10n.in.ewaybill.extend</field>
+        <field name="arch" type="xml">
+            <form string="Extend Eway Bill">
+                <group>
+                    <group>
+                        <field name="reason_code"/>
+                        <field name="remarks" attrs="{'invisible': [('reason_code', '!=', '99')], 'required': [('reason_code', '=', '99')]}"/>
+                        <field name="from_place"/>
+                        <field name="from_pincode"/>
+                        <field name="from_state_id"/>
+                        <field name="remaining_distance"/>
+                        <field name="consignment_status"/>
+                    </group>
+                    <group attrs="{'invisible': [('consignment_status', '!=', 'T')]}">
+                        <field name="transit_type" attrs="{'required': [('consignment_status', '=', 'T')]}"/>
+                        <field name="street" attrs="{'required': [('consignment_status', '=', 'T')]}"/>
+                        <field name="street2" attrs="{'required': [('consignment_status', '=', 'T')]}"/>
+                        <field name="street3" attrs="{'required': [('consignment_status', '=', 'T')]}"/>
+                    </group>
+                    <group attrs="{'invisible': [('consignment_status', '!=', 'M')]}">
+                        <field name="mode" attrs="{'required': [('consignment_status', '=', 'M')]}"/>
+                        <field name="vehicle_no" attrs="{'required': [('mode', '=', '1')], 'invisible': [('mode', '!=', '1')]}"/>
+                        <field name="transporter_doc_no" attrs="{'required': [('mode', 'in', ('2','3','4'))], 'invisible': [('mode', 'not in', ('2','3','4'))]}"/>
+                        <field name="transporter_doc_date" attrs="{'required': [('mode', 'in', ('2','3','4'))], 'invisible': [('mode', 'not in', ('2','3','4'))]}"/>
+                    </group>
+                </group>
+                <footer>
+                    <button type="object" name="action_extend_ewaybill" string="Extend Eway Bill" default_focus="1" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

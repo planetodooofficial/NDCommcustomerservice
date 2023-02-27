@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!--    <record id="shop_instance_company_rule" model = "ir.rule">-->
+<!--       <field name="name">Shop instances based on Company</field>-->
+<!--       <field name="model_id" ref="model_shop_instance"/>-->
+<!--       <field name="groups" eval="[(4, ref ('base.group_user'))]" />-->
+<!--       <field name="perm_read" eval="True"/>-->
+<!--       <field name="perm_write" eval="True"/>-->
+<!--       <field name="perm_create" eval="True"/>-->
+<!--       <field name="perm_unlink" eval="True"/>-->
+<!--       <field name="domain_force">[('company_id', 'in', company_ids)] </field>-->
+<!--    </record>-->
+
+    <record id="shop_sales_channel_company_rule" model = "ir.rule">
+       <field name="name">Shop sales channel based on Company</field>
+       <field name="model_id" ref="model_shop_sales_channel"/>
+       <field name="groups" eval="[(4, ref ('base.group_user'))]" />
+       <field name="perm_read" eval="True"/>
+       <field name="perm_write" eval="True"/>
+       <field name="perm_create" eval="True"/>
+       <field name="perm_unlink" eval="True"/>
+       <field name="domain_force">[('company_id', 'in', company_ids)] </field>
+    </record>
+
+<!--    <record id="shop_import_logs_company_rule" model = "ir.rule">-->
+<!--       <field name="name">Shop import logs based on Company</field>-->
+<!--       <field name="model_id" ref="model_shop_import_logs"/>-->
+<!--       <field name="groups" eval="[(4, ref ('base.group_user'))]" />-->
+<!--       <field name="perm_read" eval="True"/>-->
+<!--       <field name="perm_write" eval="True"/>-->
+<!--       <field name="perm_create" eval="True"/>-->
+<!--       <field name="perm_unlink" eval="True"/>-->
+<!--       <field name="domain_force">[('company_id', 'in', company_ids)] </field>-->
+<!--    </record>-->
+
+    <record id="group_reset_to_draft_button" model="res.groups">
+        <field name="name">Show Reset to Draft Button</field>
+    </record>
+
+    <record id="group_to_show_ecommerce_settings" model="res.groups">
+        <field name="name">Show Ecommerce Channels Settings</field>
+    </record>
+</odoo>

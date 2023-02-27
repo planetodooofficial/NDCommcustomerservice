@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="paperformat_new_invoice_order" model="report.paperformat">
+        <field name="name">New Invoice</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="report_invoice_customized">
+        <t t-call="web.html_container">
+            <t t-set="print_custom" t-value="True"/>
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <table style="width: 100%; border: 1px solid">
+                        <tr>
+                            <td style="display:flex; justify-content:center; text-align: center">
+                                <img t-att-src="image_data_uri(doc.company_id.logo)"
+                                     alt="Logo"/>
+                                <h3>
+                                    <strong>Tax Invoice</strong>
+                                </h3>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width: 100%; border: 1px solid;">
+                        <tr style="width:100%;">
+                            <td colspan="2" style="background-color:#c0c0c0; height:5px; border: 1px solid;"/>
+                        </tr>
+                        <tr style="width: 100%; border: 1px solid;">
+                            <td style="width:50%;  padding-left: 1%;">
+                                <span>
+                                    <strong>
+                                        <h4>Sold By</h4>
+                                    </strong>
+                                </span>
+                                <t t-esc="doc.company_id.name"/>
+                                <br/>
+                                <t t-esc="doc.company_id.street"/>,
+                                <t t-if="doc.company_id.street2">
+                                    <t t-esc="doc.company_id.street2"/>,
+                                </t>
+                                <br/>
+                                <t t-esc="doc.company_id.city"/>,
+                                <t t-if="doc.company_id.state_id.name">
+                                    <t t-esc="doc.company_id.state_id.name"/>-
+                                </t>
+                                <t t-esc="doc.company_id.zip"/>,
+                                <t t-esc="doc.company_id.country_id.name"/>
+                                <br/>
+                                <t t-if="doc.company_id.vat">
+                                    GSTIN/UIN :
+                                    <t t-esc="doc.company_id.vat"/>
+                                </t>
+                                <br/>
+                                <span>CIN:</span>
+                            </td>
+                            <td style="width:50%; font-size: 13px;">
+                                <table style="width:100%; font-size: 13px !important;">
+                                    <tr>
+                                        <td colspan="1" style="padding-left: 1%;">
+                                            <strong>Order No :</strong>
+                                            <t t-esc="doc.invoice_origin"/>
+                                        </td>
+                                        <td colspan="1" style="padding-left: 1%;">
+                                            <strong>Order Date :</strong>
+                                            <t t-esc="doc.sale_order_connection()"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="padding-left: 1%;">
+                                            <strong>Extern Order No :</strong>
+                                            <t t-esc="doc.payment_reference"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="padding-left: 1%;">
+                                            <strong>Invoice No :</strong>
+                                            <t t-esc="doc.payment_reference"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" style="padding-left: 1%;">
+                                            <strong>Payment Mode :</strong>
+                                            <span><t t-esc="doc.sale_order_pay()"/></span>
+                                        </td>
+                                        <td colspan="1" style="padding-left: 1%;">
+                                            <strong>Invoice Date :</strong>
+                                            <t t-esc="doc.invoice_date.strftime('%b %d, %Y')"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" style="padding-left: 1%;">
+                                            <strong>Type of Supply :</strong>
+                                            <!--                                            <t t-esc="doc.amount_residual"/>-->
+                                            <span>Goods</span>
+                                        </td>
+                                        <td colspan="1" style="padding-left: 1%;">
+                                            <strong>Order Currency :</strong>
+                                            <t t-esc="doc.company_id.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="padding-left: 1%;">
+                                            <strong>Place of Supply :</strong>
+                                            <t t-esc="doc.company_id.state_id.name"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%; border: 1px solid;">
+                        <tr>
+                            <th style="background-color: #c0c0c0; text-align: center; border: 1px solid">
+                                Billing Address
+                            </th>
+                            <th style="background-color: #c0c0c0; text-align: center; border: 1px solid">
+                                Shipping Address
+                            </th>
+                        </tr>
+                        <tr>
+                            <t t-if="doc.partner_id.child_ids">
+                                <t t-foreach="doc.partner_id.child_ids" t-as="add">
+                                    <t t-if="add.type == 'invoice'">
+                                        <td style="width:50%;  padding-left: 1%; border: 1px solid">
+                                            <t t-if="add.name">
+                                                <t t-esc="add.name.title()"/>
+                                                <br/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="doc.partner_id.name.title()"/>
+                                                <br/>
+                                            </t>
+                                            <t t-if="add.street">
+                                                <t t-esc="add.street"/>,
+                                            </t>
+                                            <t t-if="add.street2">
+                                                <t t-esc="add.street2"/>,
+                                            </t>
+                                            <br/>
+                                            <t t-esc="add.city"/>,
+                                            <t t-if="add.state_id.name">
+                                                <t t-esc="add.state_id.name"/>-
+                                            </t>
+                                            <t t-esc="add.zip"/>,
+                                            <t t-esc="add.country_id.name"/>
+                                            <br/>
+                                            <strong>EMAIL:</strong>
+                                            <t t-if="add.email">
+                                                <t t-esc="add.email"/>
+                                            </t>
+                                            <br/>
+                                            <t t-if="add.phone">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="add.phone"/>
+                                                <br/>
+                                            </t>
+                                            <t t-else="add.mobile">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="add.mobile"/>
+                                                <br/>
+                                            </t>
+                                            <t t-if="doc.partner_id.vat">
+                                                <strong>GSTIN No :</strong>
+                                                <t t-esc="doc.partner_id.vat"/>
+                                            </t>
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td style="width:50%;  padding-left: 1%; border: 1px solid">
+                                            <t t-esc="doc.partner_id.name.title()"/>
+                                            <br/>
+                                            <t t-esc="doc.partner_id.street"/>,
+                                            <t t-if="doc.partner_id.street2">
+                                                <t t-esc="doc.partner_id.street2"/>,
+                                            </t>
+                                            <br/>
+                                            <t t-esc="doc.partner_id.city"/>,
+                                            <t t-if="doc.partner_id.state_id.name">
+                                                <t t-esc="doc.partner_id.state_id.name"/>-
+                                            </t>
+                                            <t t-esc="doc.partner_id.zip"/>,
+                                            <t t-esc="doc.partner_id.country_id.name"/>
+                                            <br/>
+                                            <strong>EMAIL:</strong>
+                                            <t t-if="doc.partner_id.email">
+                                                <t t-esc="doc.partner_id.email"/>
+                                            </t>
+                                            <br/>
+                                            <t t-if="doc.partner_id.phone">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="doc.partner_id.phone"/>
+                                                <br/>
+                                            </t>
+                                            <t t-else="doc.partner_id.mobile">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="doc.partner_id.mobile"/>
+                                                <br/>
+                                            </t>
+                                            <t t-if="doc.partner_id.vat">
+                                                <strong>GSTIN No :</strong>
+                                                <t t-esc="doc.partner_id.vat"/>
+                                            </t>
+                                            <br/>
+                                        </td>
+                                    </t>
+                                    <t t-if="add.type == 'delivery'">
+                                        <td style="width:50%;  padding-left: 1%; border: 1px solid">
+                                            <t t-if="add.name">
+                                                <t t-esc="add.name.title()"/>
+                                                <br/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="doc.partner_id.name.title()"/>
+                                                <br/>
+                                            </t>
+                                            <t t-esc="add.street"/>,
+                                            <t t-if="add.street2">
+                                                <t t-esc="add.street2"/>,
+                                            </t>
+                                            <br/>
+                                            <t t-esc="add.city"/>,
+                                            <t t-if="add.state_id.name">
+                                                <t t-esc="add.state_id.name"/>-
+                                            </t>
+                                            <t t-esc="add.zip"/>,
+                                            <t t-esc="add.country_id.name"/>
+                                            <br/>
+                                            <strong>EMAIL:</strong>
+                                            <t t-if="add.email">
+                                                <t t-esc="add.email"/>
+                                            </t>
+                                            <br/>
+                                            <t t-if="add.phone">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="add.phone"/>
+                                                <br/>
+                                            </t>
+                                            <t t-else="add.mobile">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="add.mobile"/>
+                                                <br/>
+                                            </t>
+                                            <t t-if="add.vat">
+                                                <strong>GSTIN No :</strong>
+                                                <t t-esc="doc.partner_id.vat"/>
+                                            </t>
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td style="width:50%;  padding-left: 1%; border: 1px solid">
+                                            <t t-esc="doc.partner_id.name.title()"/>
+                                            <br/>
+                                            <t t-esc="doc.partner_id.street"/>,
+                                            <t t-if="doc.partner_id.street2">
+                                                <t t-esc="doc.partner_id.street2"/>,
+                                            </t>
+                                            <br/>
+                                            <t t-esc="doc.partner_id.city"/>,
+                                            <t t-if="doc.partner_id.state_id.name">
+                                                <t t-esc="doc.partner_id.state_id.name"/>-
+                                            </t>
+                                            <t t-esc="doc.partner_id.zip"/>,
+                                            <t t-esc="doc.partner_id.country_id.name"/>
+                                            <br/>
+                                            <strong>EMAIL:</strong>
+                                            <t t-if="doc.partner_id.email">
+                                                <t t-esc="doc.partner_id.email"/>
+                                            </t>
+                                            <br/>
+                                            <t t-if="doc.partner_id.phone">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="doc.partner_id.phone"/>
+                                                <br/>
+                                            </t>
+                                            <t t-else="add.mobile">
+                                                <strong>Contact:</strong>
+                                                <t t-esc="add.mobile"/>
+                                                <br/>
+                                            </t>
+                                            <t t-if="doc.partner_id.vat">
+                                                <strong>GSTIN No :</strong>
+                                                <t t-esc="doc.partner_id.vat"/>
+                                            </t>
+                                            <br/>
+                                        </td>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <td style="width:50%;  padding-left: 1%; border: 1px solid">
+                                    <t t-esc="doc.partner_id.name"/>
+                                    <br/>
+                                    <t t-esc="doc.partner_id.street"/>,
+                                    <t t-if="doc.partner_id.street2">
+                                        <t t-esc="doc.partner_id.street2"/>,
+                                    </t>
+                                    <br/>
+                                    <t t-esc="doc.partner_id.city"/>,
+                                    <t t-if="doc.partner_id.state_id.name">
+                                        <t t-esc="doc.partner_id.state_id.name"/>-
+                                    </t>
+                                    <t t-esc="doc.partner_id.zip"/>,
+                                    <t t-esc="doc.partner_id.country_id.name"/>
+                                    <br/>
+                                    <strong>EMAIL:</strong>
+                                    <t t-if="doc.partner_id.email">
+                                        <t t-esc="doc.partner_id.email"/>
+                                    </t>
+                                    <br/>
+                                    <t t-if="doc.partner_id.phone">
+                                        <strong>Contact:</strong>
+                                        <t t-esc="doc.partner_id.phone"/>
+                                        <br/>
+                                    </t>
+                                    <t t-else="doc.partner_id.mobile">
+                                        <strong>Contact:</strong>
+                                        <t t-esc="doc.partner_id.mobile"/>
+                                        <br/>
+                                    </t>
+                                    <t t-if="doc.partner_id.vat">
+                                        <strong>GSTIN No :</strong>
+                                        <t t-esc="doc.partner_id.vat"/>
+                                    </t>
+                                    <br/>
+                                </td>
+                                <td style="width:50%;  padding-left: 1%; border: 1px solid">
+                                    <t t-esc="doc.partner_id.name"/>
+                                    <br/>
+                                    <t t-esc="doc.partner_id.street"/>,
+                                    <t t-if="doc.partner_id.street2">
+                                        <t t-esc="doc.partner_id.street2"/>,
+                                    </t>
+                                    <br/>
+                                    <t t-esc="doc.partner_id.city"/>,
+                                    <t t-if="doc.partner_id.state_id.name">
+                                        <t t-esc="doc.partner_id.state_id.name"/>-
+                                    </t>
+                                    <t t-esc="doc.partner_id.zip"/>,
+                                    <t t-esc="doc.partner_id.country_id.name"/>
+                                    <br/>
+                                    <strong>EMAIL:</strong>
+                                    <t t-if="doc.partner_id.email">
+                                        <t t-esc="doc.partner_id.email"/>
+                                    </t>
+                                    <br/>
+                                    <t t-if="doc.partner_id.phone">
+                                        <strong>Contact:</strong>
+                                        <t t-esc="doc.partner_id.phone"/>
+                                        <br/>
+                                    </t>
+                                    <t t-else="doc.partner_id.mobile">
+                                        <strong>Contact:</strong>
+                                        <t t-esc="doc.partner_id.mobile"/>
+                                        <br/>
+                                    </t>
+                                    <t t-if="doc.partner_id.vat">
+                                        <strong>GSTIN No :</strong>
+                                        <t t-esc="doc.partner_id.vat"/>
+                                    </t>
+                                    <br/>
+                                </td>
+                            </t>
+                        </tr>
+                    </table>
+                    <table style="width:100%; border: 1px solid">
+                        <tr style="background-color:#c0c0c0; color: #000; font-size:15px; width: 100%">
+                            <th style="width:40%;">
+                                Item Code
+                            </th>
+                            <th style="width:12%;">
+                                HSN
+                            </th>
+                            <th style="width:12%;">
+                                QTY
+                            </th>
+                            <th style="width:12%;">
+                                Unit Price
+                            </th>
+                            <th style="width:12%;">
+                                Taxes
+                            </th>
+                            <th style="width:12%;">
+                                Amount
+                            </th>
+                        </tr>
+                        <t t-foreach="doc.invoice_line_ids" t-as="line">
+                            <tr style="width: 100%; background-color: #F0F0F0">
+                                <td style="width:40%; text-align: left">
+                                    <t t-esc="line.product_id.name"/>
+                                </td>
+                                <td style="width:12%; text-align: center">
+                                    <t t-if="line.hsn_id">
+                                        <t t-esc="line.hsn_id"/>
+                                    </t>
+                                </td>
+                                <td style="width:12%; text-align: center">
+                                    <t t-esc="line.quantity"/>
+                                </td>
+                                <td style="width:12%; text-align: center">
+                                    <t t-esc="line.price_unit"/>
+                                </td>
+                                <td style="width:12%; text-align: center">
+                                    <t t-esc="line.tax_ids.name"/>
+                                </td>
+                                <td style="width:12%; text-align: center">
+                                    <t t-esc="line.price_subtotal"/>
+                                </td>
+                            </tr>
+                            <br/>
+                        </t>
+                    </table>
+                    <table style="width:100%; border: 1px solid; border-collapse: collapse;">
+                        <tr style="width:100%">
+                            <td style="width:50%"/>
+                            <td style="width:50%; padding-right:10px;">
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td style="text-align:right;">
+                                            <strong>Untaxed Amount:
+                                                <t t-esc="doc.amount_untaxed"/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:right;">
+                                            <t t-if="doc.invoice_line_ids.tax_ids.name[:3] == 'GST'">
+                                                <strong>CGST:
+                                                    <t t-esc="doc.amount_tax / 2"/>
+                                                </strong>
+                                                <br/>
+                                                <strong>SGST:
+                                                    <t t-esc="doc.amount_tax / 2"/>
+                                                </strong>
+                                            </t>
+                                            <t t-else="line.tax_ids.name[:3] != 'GST'">
+                                                <strong>IGST:
+                                                    <t t-esc="doc.amount_tax"/>
+                                                </strong>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:right;">
+                                            <strong>Total:
+                                                <t t-esc="doc.amount_total"/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr style="width:100%; border: 1px solid;">
+                            <td colspan="2" style="background-color:#c0c0c0; text-align:right">
+                                <span><strong>Amount In words</strong>:
+                                    <t t-esc="doc.amount_total_words"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%; border: 1px solid;">
+                        <tr>
+                            <td colspan="5" style="text-align:right;">
+                                <img t-att-src="image_data_uri(doc.company_id.logo)" height="100px" width="137px"
+                                     alt="Logo"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">Prepared By</td>
+                            <td colspan="1">Verified By</td>
+                            <td colspan="1">Authorised Signature</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Thank you for shopping with us.</td>
+                        </tr>
+                    </table>
+                    <table style="border: 1px solid; width: 100%">
+                        <tr>
+                            <td colspan="3">Tax is not payable under reverse charge basis</td>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="custom_invoice_report" model="ir.actions.report">
+        <field name="name">Invoices</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">base_ecommerce.report_invoice_customized</field>
+        <field name="binding_model_id" ref="model_account_move"/>
+        <field name="paperformat_id" ref="base_ecommerce.paperformat_new_invoice_order"/>
+    </record>
+    <record id="account.account_invoices" model="ir.actions.report">
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+</odoo>
