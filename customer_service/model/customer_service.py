@@ -3,6 +3,13 @@ from odoo.exceptions import ValidationError
 from datetime import datetime
 
 
+# Creating Master Reason
+class ReasonReasons(models.Model):
+    _name = 'reason.reasons'
+    _description = "Master Description"
+
+    name = fields.Char(string="Reason Name")
+
 class CustomerService(models.Model):
     _inherit = "sale.order"
 
@@ -35,15 +42,29 @@ class CustomerService(models.Model):
     custom_state = fields.Selection(
         [('cancellation_requested', 'Cancellation Requested'), ('rto_requested', 'RTO Requested'),
          ('rvp_requested', 'RVP Requested'), ('returned', 'Returned'),
-         ('refund_requested', 'Refund Requested'),('order_cancel','order_cancel') ,('audited', 'Audited'), ('refunded', 'Refunded')],
+         ('refund_requested', 'Refund Requested'),('order_cancel','Order cancelled') ,('audited', 'Audited'), ('refunded', 'Refunded')],
         string='Status', store=True, readonly=True, tracking=True, copy=False)
 
     approval_status = fields.Selection(
-        [('draft', 'Draft'), ('waiting_for_approval', 'Waiting for Approval'), ('approved', 'Approved')], readonly=True, tracking=True, copy=False)
+        [('draft', 'Draft'), ('waiting_for_approval', 'Waiting for Approval'), ('approved', 'Approved'),('reject','Rejected')], readonly=True, tracking=True, copy=False)
 
     claim_status = fields.Selection(
         [('not_required', 'Not Required'), ('insurance', 'Insurance'),
          ('damage_claim_with_courier', 'Damage Claim with Courier'), ('warehouse', 'Warehouse')], readonly=True, tracking=True, copy=False)
+
+    state = fields.Selection(
+        selection=[
+            ('draft', "Quotation"),
+            ('sent', "Quotation Sent"),
+            ('sale', "Sales Order"),
+            ('done', "Locked"),
+            ('delivered', "Delivered"),
+            ('cancel', "Cancelled"),
+        ],
+        string="Status",
+        readonly=True, copy=False, index=True,
+        tracking=3,
+        default='draft')
 
     @api.depends('vinculum_status')
     def _check_viniculam_status(self):
@@ -62,11 +83,13 @@ class CustomerService(models.Model):
             self.return_request = False
             self.canc_req_datetime = datetime.today()
             self.custom_state = "cancellation_requested"
+            self.approval_status = "waiting_for_approval"
 
     def approve_cancellation(self):
         self.cancellation = True
         self.state = "cancel"
         self.custom_state = "order_cancel"
+        self.approval_status = "approved"
 
     def rto_button(self):
         self.rto_req = True
@@ -82,6 +105,15 @@ class CustomerService(models.Model):
         self.custom_state = "audited"
         self.approval_status = "approved"
 
+    def reject_funds(self):
+        return {
+            'name': 'Reject Reason',
+            'res_model': 'reasons.wiz',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
     def send_approved(self):
         pass
 
@@ -92,7 +124,7 @@ class CustomerService(models.Model):
         pass
 
     def marked_delivered(self):
-        pass
+        self.state = "delivered"
 
     def refund_request(self):
         self.custom_state = "refund_requested"

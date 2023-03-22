@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Reason Wizard  -->
+    <record id="reason_wiz_all" model="ir.ui.view">
+        <field name="name">Reason Select wizard</field>
+        <field name="model">reasons.wiz</field>
+        <field name="arch" type="xml">
+            <form string="Select Reason">
+                <group>
+                     <field name="master_reason" string="Reason" required="1"
+                            options="{'no_open': True, 'no_create': True}"/>
+                </group>
+                <footer>
+                    <button string="Confirm" class="btn-primary" name="log_message" type="object"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

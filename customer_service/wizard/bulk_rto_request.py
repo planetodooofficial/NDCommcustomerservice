@@ -19,7 +19,6 @@ class BulkRtoWizard(models.TransientModel):
         data = pd.read_excel(filename).fillna(False).to_dict('index').values()
         print(data)
 
-        carrier_lst = []
         order_name = []
         lst = []
         count = 0
@@ -39,7 +38,7 @@ class BulkRtoWizard(models.TransientModel):
             else:
                 cr_dic[order['carrier']].add(order['name'])
 
-        print('Cr Dic :', cr_dic)
+        # print('Cr Dic :', cr_dic)
 
         for keys, values in cr_dic.items():
             print(keys, values)
@@ -48,14 +47,25 @@ class BulkRtoWizard(models.TransientModel):
                 'carrier': delivery_carrier_id.id,
                 'count': len(values),
                 'orders1': ",".join(values),
+                'spoc': delivery_carrier_id.spoc
             }
+            print(values)
+            for i in values:
+                order_name.append(i)
 
-            print(data_vals)
+                for j in order_name:
+                    sale_order_search = self.env['sale.order'].search([('name', '=', j)])
+                    if sale_order_search:
+                        sale_order_search.write({'custom_state': "rto_requested"})
+
+
+            # update email by carrier id
 
             vals = (0, 0, data_vals)
             lst.append(vals)
         _id = self.env['bulk.rto.wizard'].create({'upload_file': self.upload_file,
                                                   'rto_mail_ids': lst})
+        print(order_name)
 
         return {
             'name': _("Rto Mail"),
@@ -80,9 +90,9 @@ class BulkRtoWizard(models.TransientModel):
             body_content2 = f""" """
             for i in items:
                 count += 1
-                body_content2 = f"""  <tr><td>{count}</td>
+                body_content2 += f"""  <tr><td style="width: 10%">{count}</td>
                 <td>{i}</td>
-                </tr><br/>"""
+                </tr>"""
 
             print(body_content2)
 
@@ -104,8 +114,7 @@ class BulkRtoWizard(models.TransientModel):
                             'body_html': body_content +
 
                              f"""
-                                    
-                                    
+                                
                                 <html><body>
                                 <div style="display:table;">
                                     <div style="display:table-header-group;">
@@ -115,9 +124,7 @@ class BulkRtoWizard(models.TransientModel):
                                         </div>
                                     </div>
                                                
-                                           
                                     <table>
-                                        
                                             {body_content2}
                                     
                                     </table>
@@ -128,21 +135,7 @@ class BulkRtoWizard(models.TransientModel):
                                 """
                             }
 
-            # < p > Dear
-            # Team < / p >
-            # < p > Please
-            # review and confirm
-            # your
-            # RTO
-            # orders
-            # below < / p >
-            # < table
-            # style = "border: 1px black solid black !important" >
-            # {output}
-            # < / table >
-            # < p > < / u > < / b > < / p >
-            # Regards, < br >
-            # # ABC < br >
+
             template.send_mail(rec.id, force_send=True, email_values=email_values)
 
 

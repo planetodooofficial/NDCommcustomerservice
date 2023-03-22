@@ -4,3 +4,5 @@ bulk.rto.wizard,bulk.rto.wizard,customer_service.model_bulk_rto_wizard,base.grou
 bulk.return.wizard,bulk.return.wizard,customer_service.model_bulk_return_wizard,base.group_user,1,1,1,1
 bulk.refund.wizard,bulk.refund.wizard,customer_service.model_bulk_refund_wizard,base.group_user,1,1,1,1
 rtorder.mail,rtorder.mail,customer_service.model_rtorder_mail,base.group_user,1,1,1,1
+reason_reasons,reason.reasons,customer_service.model_reason_reasons,,1,1,1,1
+reasons_wiz,reasons.wiz,customer_service.model_reasons_wiz,,1,1,1,1

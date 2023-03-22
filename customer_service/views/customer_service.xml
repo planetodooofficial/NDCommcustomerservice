@@ -8,12 +8,26 @@
         <field eval="1" name="priority"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//header/button[@name='action_confirm']" position="attributes">
+<!--            <xpath expr="//header/button[@name='action_confirm']" position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </xpath>-->
+            <xpath expr="//header/button[@name='action_draft']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//header/button[@name='action_cancel']" position="replace">
-
+             <xpath expr="//header/button[@name='action_confirm']" position="replace">
             </xpath>
+            <xpath expr="//header/button[@name='action_confirm']" position="replace">
+            </xpath>
+
+             <xpath expr="//header/button[@name='action_quotation_send']" position="replace">
+            </xpath>
+
+<!--             <xpath expr="//header/button[@name='action_draft']" position="replace">-->
+<!--            </xpath>-->
+
+            <xpath expr="//header/button[@name='action_cancel']" position="replace">
+            </xpath>
+
             <xpath expr="//page[@name='other_information']" position="after">
                 <page string="Customer Service">
                     <group>
@@ -52,9 +66,9 @@
             <xpath expr="//form/header">
                 <button name="request_cancellation_button" groups="customer_service.customer_experience_group,customer_service.warehouse_group,customer_service.order_processing_group" type="object" string="Request Cancellation"
                         attrs="{'invisible': [('state', 'not in', ['draft'])]}" class="btn btn-sm"/>
-                <button name="refund_request" type="object" groups="account.group_account_invoice,customer_service.customer_experience_group,customer_service.order_processing_group" string="Refund Request" class="btn btn-sm"/>
-                <button name="rto_button" groups="customer_service.tracking_group" type="object" string="RTO Request" class="btn btn-sm"/>
-                <button name="return_button" type="object" string="Return" class="btn btn-sm"/>
+                <button name="refund_request" type="object" groups="account.group_account_invoice,customer_service.customer_experience_group,customer_service.order_processing_group" string="Refund Request" attrs="{'invisible':['|',('vinculum_payment_method','!=','Prepaid'),('custom_state', 'not in', ['order_cancel'])]}" class="btn btn-sm"/>
+                <button name="rto_button" groups="customer_service.tracking_group" type="object" string="RTO Request" attrs="{'invisible':[('custom_state', 'not in', ['order_cancel'])]}" class="btn btn-sm"/>
+                <button name="return_button" type="object" string="Return" attrs="{'invisible':[('custom_state', 'not in', ['order_cancel'])]}" class="btn btn-sm"/>
 <!--                <button name="send_approved" type="object" string="Send for Approval" class="btn btn-primary"/>-->
                 <field name="claim_status" widget="statusbar"/>
             </xpath>
@@ -65,16 +79,17 @@
                     <!--   Buttons   -->
                     <field name="custom_state" widget="statusbar" />
                     <button name="vaniculum_button" type="object" string="Sync Vinculum Button"
-                            class="btn btn-sm btn-success"/>
+                            class="btn btn-sm btn-success" attrs="{'invisible': [('custom_state', 'not in', ['order_cancel'])]}"/>
                 </header>
                 <!--   Approval Status            -->
                 <header>
                     <field name="approval_status" widget="statusbar"/>
-                    <button name="reverse_pick" type="object" string="Reverse Pick" class="btn btn-sm"/>
+<!--                    <button name="reverse_pick" type="object" string="Reverse Pick" attrs="{'invisible':[('custom_state', 'not in', ['order_cancel'])]}" class="btn btn-sm"/>-->
                     <button name="marked_delivered" type="object" string="Marked as Delivered" class="btn btn-sm"/>
                     <button name="approve_cancellation" string="Mark as Cancelled" groups="customer_service.warehouse_group" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}" class="btn btn-sm"/>
-                    <button name="approve_funds" string="Approve Funds" groups="customer_service.management_group" type="object" attrs="{'invisible': [('state', 'not in', ['draft','cancel'])]}" class="btn btn-sm"/>
-                    <button name="mark_refunded" string="Mark as Refunded" groups="customer_service.management_group,account.group_account_invoice" type="object" attrs="{'invisible': [('state', 'not in', ['draft','cancel']),('approval_status', 'not in', ['approved'])]}" class="btn btn-sm"/>
+                    <button name="approve_funds" string="Approve Funds" groups="customer_service.management_group" type="object" attrs="{'invisible': [('custom_state', 'not in', ['refund_requested','order_cancel'])]}" class="btn btn-sm"/>
+                    <button name="reject_funds" string="Reject Funds" groups="customer_service.management_group" type="object" attrs="{'invisible': [('custom_state', 'not in', ['refund_requested','order_cancel'])]}" class="btn btn-sm"/>
+                    <button name="mark_refunded" string="Mark as Refunded" groups="customer_service.management_group,account.group_account_invoice" type="object" attrs="{'invisible': ['|', '|',('custom_state','in',['refunded']),('approval_status', 'not in', ['approved']),('vinculum_payment_method','!=','Prepaid')]}" class="btn btn-sm"/>
 
                 </header>
             </xpath>
@@ -107,6 +122,43 @@
             </field>
     </record>
 
+<!--    Master reasons -->
+         <record id="master_reason_view_list" model="ir.ui.view">
+            <field name="model">reason.reasons</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="master_reason_view_form" model="ir.ui.view">
+            <field name="model">reason.reasons</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_reason_master" model="ir.actions.act_window">
+            <field name="name">Reasons</field>
+            <field name="res_model">reason.reasons</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+<!--    Menuitem-->
+        <menuitem
+            id="menu_reason_master"
+            name="Reasons"
+            parent="sale.menu_sale_config"
+            action="customer_service.action_reason_master"
+            sequence="20"/>
 
 
 </odoo>
