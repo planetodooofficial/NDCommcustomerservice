@@ -1,0 +1,330 @@
+<odoo>
+    <record id="view_inventory_transfer_tree" model="ir.ui.view">
+        <field name="name">view.inventory.transfer.tree</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="create_sale_order_from_transfer" type="object" class="oe_stat_button" icon="fa-users"
+                        string="Sale Order" attrs="{'invisible': [('is_so', '=', False)]}">
+                    <div class="o_stat_info">
+                        <field name="sale_count" class="o_stat_value"/>
+                        <span class="o_stat_text">Sale Order</span>
+                    </div>
+                </button>
+            </div>
+            <div name="button_box" position="inside">
+                <button name="create_single_sale_order_from_transfer" type="object" class="oe_stat_button"
+                        icon="fa-users"
+                        string="Sale Order" attrs="{'invisible': [('is_single_so', '=', False)]}">
+                    <div class="o_stat_info">
+                        <field name="sale_single_count" class="o_stat_value"/>
+                        <span class="o_stat_text">Sale Order</span>
+                    </div>
+                </button>
+            </div>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='origin']" position="after">
+                <field name="finished_good_connection" invisible="1"/>
+            </xpath>
+
+            <!-- Additional info tab field which will be visible when checkbox will be ticked in operation type -->
+            <xpath expr="//notebook/page[@name='extra']/group/group" position="after">
+                <group attrs="{'invisible': [('is_vehicle', '=', False)]}">
+                    <separator string="Vehicle Details"
+                               style="font-size: 17px; color: #71639edb"/>
+                    <field name="new_vehicle_otl_details"/>
+                    <field name="is_vehicle" invisible="1"/>
+                    <field name="is_delivery" invisible="1"/>
+                    <field name="is_sale" invisible="1"/>
+                    <field name="is_export" invisible="1"/>
+                </group>
+            </xpath>
+            <xpath expr="//notebook/page[@name='extra']/group" position="after">
+                <group>
+                    <group attrs="{'invisible': [('is_sale', '=', False)]}">
+                        <separator string="Sale Invoice Details applicable"
+                                   style="font-size: 17px; color: #71639edb"/>
+                        <field name="gst_invoice_no"/>
+                        <field name="gst_invoice_date"/>
+                        <field name="sgst_tax_paid_amount"/>
+                        <field name="cgst_tax_paid_amount"/>
+                        <field name="igst_tax_paid_amount"/>
+                        <field name="gst_comp_cess_paid_amount"/>
+                    </group>
+                    <group attrs="{'invisible': [('is_delivery', '=', False)]}">
+                        <separator string="Delivery Challan Details applicable"
+                                   style="font-size: 17px; color: #71639edb"/>
+                        <field name="delivery_challan"/>
+                        <field name="gstin_of_consignee"/>
+                    </group>
+                </group>
+                <group>
+                    <group attrs="{'invisible': [('is_export', '=', False)]}">
+                        <separator string="Export Details applicable"
+                                   style="font-size: 17px; color: #71639edb"/>
+                        <field name="shipping_bill_no"/>
+                        <field name="shipping_bill_date"/>
+                        <field name="assessable_value"/>
+                        <field name="export_duty_value"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//form/sheet/group/group[2]/field[@name='date_done']" position="attributes">
+                <attribute name="readonly">0</attribute>
+                <attribute name="attrs">{}</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='origin']" position="after">
+                <field name="is_vehicle_details" invisible="1"/>
+            </xpath>
+            <xpath expr="//form/sheet/group/group/field[@name='location_dest_id']" position="attributes">
+                <attribute name="attrs">{}</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group/field[@name='location_id']" position="attributes">
+                <attribute name="attrs">{}</attribute>
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='operations']/field[@name='move_ids_without_package']/tree/field[@name='product_uom']"
+                   position="after">
+                <button name="view_order_line" string="Additional fields" type="object"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='operations']/field[@name='move_ids_without_package']/tree/field[@name='lot_ids']"
+                   position="attributes">
+                <attribute name="attrs">{}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='operations']/field[@name='move_ids_without_package']/tree/field[@name='lot_ids']"
+                   position="attributes">
+                <attribute name="optional">show</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='operations']/field[@name='move_ids_without_package']/tree/field[@name='product_id']"
+                   position="after">
+                <field name="invoice_currency" readonly="False"/>
+                <field name="is_lots" invisible="1"/>
+                <field name="is_lot" invisible="1"/>
+                <field name="exchange_rate" readonly="False"/>
+                <field name="invoice_no" readonly="False"/>
+                <field name="be_line_no" readonly="False"/>
+                <field name="material_code" readonly="False"/>
+                <field name="unit" readonly="False"/>
+                <field name="cth" readonly="False"/>
+                <field name="lot_id" readonly="False"/>
+                <field name="cif_value" optional="hide" readonly="False"/>
+                <field name="assessable_value" optional="hide" readonly="False"/>
+                <field name="basic_duty_rate" optional="hide" readonly="False"/>
+                <field name="total_basic_duty" optional="hide" readonly="False"/>
+                <field name="sws_rate" optional="hide" readonly="False"/>
+                <field name="sws_duty_amt" optional="hide" readonly="False"/>
+                <field name="igst_rate" optional="hide" readonly="False"/>
+                <field name="igst_amount" optional="hide" readonly="False"/>
+                <field name="total_duty" optional="hide" readonly="False"/>
+                <field name="country_of_origin" optional="hide" readonly="False"/>
+                <field name="health_cess" optional="hide" readonly="False"/>
+                <field name="nccd" optional="hide" readonly="False"/>
+                <field name="acd" optional="hide" readonly="False"/>
+                <field name="sad" optional="hide" readonly="False"/>
+                <field name="g_cess" optional="hide" readonly="False"/>
+                <field name="add" optional="hide" readonly="False"/>
+                <field name="cvd" optional="hide" readonly="False"/>
+                <field name="sg" optional="hide" readonly="False"/>
+                <field name="saed" optional="hide" readonly="False"/>
+                <field name="gsia" optional="hide" readonly="False"/>
+                <field name="spexd" optional="hide" readonly="False"/>
+                <field name="chcess" optional="hide" readonly="False"/>
+                <field name="cess" optional="hide" readonly="False"/>
+                <field name="caidc" optional="hide" readonly="False"/>
+                <field name="eaidc" optional="hide" readonly="False"/>
+                <field name="cusedc" optional="hide" readonly="False"/>
+                <field name="cushec" optional="hide" readonly="False"/>
+                <field name="ncd" optional="hide" readonly="False"/>
+                <field name="aggr" optional="hide" readonly="False"/>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='operations']" position="before">
+                <page string="FG" attrs="{'invisible': [('finished_good_connection', '=', False)]}">
+                    <field name="manufacturing_fg_ids">
+                        <tree editable="bottom">
+                            <field name="manufacturing_product_id"/>
+                            <field name="lot_producing_id"/>
+                            <field name="location_move_id"/>
+                            <field name="location_dest_move_id"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='operations']" position="after">
+                <page string="Component" attrs="{'invisible': [('picking_type_code', 'in', ['incoming', 'outgoing'])]}">
+                    <field name="manufacturing_component_ids">
+                        <tree editable="bottom">
+                            <field name="manufacturing_component_id"/>
+                            <field name="invoice_currency"/>
+                            <field name="exchange_rate"/>
+                            <field name="invoice_no"/>
+                            <field name="be_line_no"/>
+                            <field name="material_code"/>
+                            <field name="unit"/>
+                            <field name="cth"/>
+                            <field name="lot_id"/>
+                            <field name="product_uom_qty"/>
+                            <field name="reserved_availability"/>
+                            <field name="quantity_done"/>
+                            <field name="product_uom"/>
+                            <field name="lot_ids" optional="hide"/>
+                            <field name="cif_value" optional="hide"/>
+                            <field name="assessable_value" optional="hide"/>
+                            <field name="basic_duty_rate" optional="hide"/>
+                            <field name="total_basic_duty" optional="hide"/>
+                            <field name="sws_rate" optional="hide"/>
+                            <field name="sws_duty_amt" optional="hide"/>
+                            <field name="igst_rate" optional="hide"/>
+                            <field name="igst_amount" optional="hide"/>
+                            <field name="total_duty" optional="hide"/>
+                            <field name="country_of_origin" optional="hide"/>
+                            <field name="health_cess" optional="hide"/>
+                            <field name="nccd" optional="hide"/>
+                            <field name="acd" optional="hide"/>
+                            <field name="sad" optional="hide"/>
+                            <field name="g_cess" optional="hide"/>
+                            <field name="add" optional="hide"/>
+                            <field name="cvd" optional="hide"/>
+                            <field name="sg" optional="hide"/>
+                            <field name="saed" optional="hide"/>
+                            <field name="gsia" optional="hide"/>
+                            <field name="spexd" optional="hide"/>
+                            <field name="chcess" optional="hide"/>
+                            <field name="cess" optional="hide"/>
+                            <field name="caidc" optional="hide"/>
+                            <field name="eaidc" optional="hide"/>
+                            <field name="cusedc" optional="hide"/>
+                            <field name="cushec" optional="hide"/>
+                            <field name="ncd" optional="hide"/>
+                            <field name="aggr" optional="hide"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='detailed_operations']"
+                   position="attributes">
+                <attribute name="attrs">{}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='operations']/field[@name='move_ids_without_package']/tree/button[@name='action_show_details']"
+                   position="attributes">
+                <attribute name="attrs">{}</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[1]/field[@name='location_id']" position="after">
+                <field name="is_so" invisible="1"/>
+                <field name="is_sale_button" invisible="1"/>
+                <field name="is_single_sale_button" invisible="1"/>
+                <field name="is_single_so" invisible="1"/>
+            </xpath>
+            <xpath expr="//form/header/button[@name='action_cancel']" position="after">
+                <button name="create_multiple_sale_order" string="Create Multiple EXIM II" type="object"
+                        attrs="{'invisible': [('is_so', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//form/header/button[@name='action_cancel']" position="after">
+                <button name="create_single_sale_order" string="Create Single EXIM II" type="object"
+                        attrs="{'invisible': [('is_single_so', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="stock_move_line_view_form" model="ir.ui.view">
+        <field name="name">stock.move.line.view.form</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <form string="Order Line">
+                <sheet>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="invoice_no" readonly="False"/>
+                            <field name="be_line_no" readonly="False"/>
+                            <field name="invsno" readonly="False"/>
+                            <field name="itemsn" readonly="False"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="health_cess" readonly="False"/>
+                            <field name="nccd" readonly="False"/>
+                            <field name="acd" readonly="False"/>
+                            <field name="cvd" readonly="False"/>
+                            <field name="sg" readonly="False"/>
+                            <field name="saed" readonly="False"/>
+                            <field name="cess" readonly="False"/>
+                            <field name="caidc" readonly="False"/>
+                            <field name="eaidc" readonly="False"/>
+                            <field name="ncd" readonly="False"/>
+                        </group>
+                        <group>readonly="False"
+                            <field name="sad" readonly="False"/>
+                            <field name="g_cess" readonly="False"/>
+                            <field name="add" readonly="False"/>
+                            <field name="gsia" readonly="False"/>
+                            <field name="spexd" readonly="False"/>
+                            <field name="chcess" readonly="False"/>
+                            <field name="cusedc" readonly="False"/>
+                            <field name="cushec" readonly="False"/>
+                            <field name="aggr" readonly="False"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="exchange_rate" readonly="False"/>
+                            <field name="cif_value" readonly="False"/>
+                            <field name="assessable_value" readonly="False"/>
+                            <field name="sws_duty_amt" readonly="False"/>
+                            <field name="igst_rate" readonly="False"/>
+                            <field name="igst_amount" readonly="False"/>
+                        </group>
+                        <group>
+                            <field name="basic_duty_rate" readonly="False"/>
+                            <field name="total_basic_duty" readonly="False"/>
+                            <field name="sws_rate" readonly="False"/>
+                            <field name="total_duty" readonly="False"/>
+                            <field name="country_of_origin" readonly="False"/>
+                            <field name="invoice_currency" readonly="False"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_product_template_form_view" model="ir.ui.view">
+        <field name="name">view.product.template.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook/page[@name='general_information']/group/group[2]/field[@name='categ_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_common_form" model="ir.ui.view">
+        <field name="name">view.common.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='barcode']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="new_inherit_stock_move_line_tree_view" model="ir.ui.view">
+        <field name="name">inherit.stock.move.line.tree.view</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='lot_id']"
+                   position="attributes">
+                <attribute name="attrs">{}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

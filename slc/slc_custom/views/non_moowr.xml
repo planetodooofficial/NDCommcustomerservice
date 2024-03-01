@@ -1,0 +1,1357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+        <field name="name">EXIM Type-I Draft</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
+        <field name="view_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="domain">[]</field>
+        <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="context">{'quotation_only': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No request for quotation found. Let's create one!
+            </p>
+            <p>
+                Requests for quotation are documents that will be sent to your suppliers to request prices for different
+                products you consider buying.
+                Once an agreement has been found with the supplier, they will be confirmed and turned into purchase
+                orders.
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="non_moowr_calendar">
+        <field name="name">non.moowr.calendar</field>
+        <field name="model">non.moowr</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <calendar string="Calendar View" date_start="date_calendar_start" hide_time="true"
+                      event_limit="5" create="false">
+                <field name="currency_id" invisible="1"/>
+                <field name="partner_ref"/>
+                <field name="amount_total" widget="monetary" invisible="1"/>
+                <field name="partner_id" filters="1" required="False"/>
+            </calendar>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="non_moowr_pivot">
+        <field name="name">non.moowr.pivot</field>
+        <field name="model">non.moowr</field>
+        <field name="arch" type="xml">
+            <pivot string="Purchase Order" display_quantity="1" sample="1">
+                <field name="partner_id" type="row" required="False"/>
+                <field name="amount_total" type="measure" invisible="1"/>
+            </pivot>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="non_moowr_graph">
+        <field name="name">non.moowr.graph</field>
+        <field name="model">non.moowr</field>
+        <field name="arch" type="xml">
+            <graph string="Purchase Order" sample="1">
+                <field name="partner_id" required="False"/>
+                <field name="amount_total" type="measure" invisible="1"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="non_moowr_form" model="ir.ui.view">
+        <field name="name">non.moowr.form</field>
+        <field name="model">non.moowr</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <form string="Non Moowr" class="o_purchase_order">
+                <header>
+                    <!--                    <button name="action_rfq_send" states="draft" string="Send by Email" type="object"-->
+                    <!--                            context="{'send_rfq':True}" class="oe_highlight" data-hotkey="g"/>-->
+                    <button name="print_quotation" string="Print RFQ" type="object" states="draft" class="oe_highlight"
+                            groups="base.group_user" data-hotkey="k"/>
+                    <button name="button_confirm" type="object" states="sent" string="Confirm Order"
+                            context="{'validate_analytic': True}" class="oe_highlight" id="bid_confirm"
+                            data-hotkey="v"/>
+                    <button name="button_approve" type="object" states='to approve' string="Approve Order"
+                            class="oe_highlight" groups="purchase.group_purchase_manager" data-hotkey="z"/>
+                    <button name="action_create_invoice" string="Create Bill" type="object" class="oe_highlight"
+                            context="{'create_bill':True}"
+                            attrs="{'invisible': ['|', ('state', 'not in', ('purchase', 'done')), ('invoice_status', 'in', ('no', 'invoiced'))]}"
+                            data-hotkey="w"/>
+                    <!--                    <button name="action_rfq_send" states="sent" string="Re-Send by Email" type="object"-->
+                    <!--                            context="{'send_rfq':True}" data-hotkey="g"/>-->
+                    <button name="print_quotation" string="Print RFQ" type="object" states="sent"
+                            groups="base.group_user" data-hotkey="k"/>
+                    <button name="button_confirm" type="object" states="draft" context="{'validate_analytic': True}"
+                            string="Validate" id="draft_confirm"/>
+                    <!--                    <button name="action_rfq_send" states="purchase" string="Send PO by Email" type="object"-->
+                    <!--                            context="{'send_rfq':False}" data-hotkey="g"/>-->
+                    <button name="confirm_reminder_mail" string="Confirm Receipt Date" type="object"
+                            attrs="{'invisible': ['|','|', ('state', 'not in', ('purchase', 'done')), ('mail_reminder_confirmed', '=', True), ('date_planned', '=', False)]}"
+                            groups="base.group_no_one" data-hotkey="o"/>
+                    <button name="action_create_invoice" string="Create Bill" type="object"
+                            context="{'create_bill':True}"
+                            invisible="1"
+                            data-hotkey="w"/>
+                    <button name="button_draft" states="cancel" string="Set to Draft" type="object" data-hotkey="o"/>
+                    <button name="button_cancel" states="draft,to approve,sent,purchase" string="Cancel" type="object"
+                            data-hotkey="x"/>
+                    <button name="button_done" type="object" string="Lock" states="purchase" data-hotkey="l"/>
+                    <button name="button_unlock" type="object" string="Unlock" states="done"
+                            groups="purchase.group_purchase_manager" data-hotkey="l"/>
+                    <button name="create_purchase_order" type="object" string="Create MOOWR"
+                            attrs="{'invisible': ['|', ('state', '!=', 'purchase'),('is_create_moowr','=',True)]}"
+                            data-hotkey="z"/>
+                    <button name="extra_fields_to_show" type="object" string="More Info" data-hotkey="l"
+                            class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,purchase" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="moowr_view" type="object" class="oe_stat_button"
+                                icon="fa-users" string="EXIM Type I Draft"
+                                attrs="{'invisible': [('is_exim', '=', False)]}" width="200px;">
+                            <div class="o_stat_info">
+                                <field name="exim_count" class="o_stat_value"/>
+                                <span class="o_stat_text">EXIM Type I Draft</span>
+                            </div>
+                        </button>
+                    </div>
+                    <!--                    <div class="oe_button_box" name="button_box">-->
+                    <!--                        <button name="boe_cost_record_button" type="object" class="oe_stat_button"-->
+                    <!--                                icon="fa-users" string="Boe Cost record">-->
+                    <!--                        </button>-->
+                    <!--                        <button name="boe_performance_record_button" type="object" class="oe_stat_button"-->
+                    <!--                                icon="fa-list" string="Boe Performance record">-->
+                    <!--                        </button>-->
+                    <!--                    </div>-->
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_invoice"
+                                class="oe_stat_button"
+                                icon="fa-pencil-square-o"
+                                attrs="{'invisible':['|', ('invoice_count', '=', 0), ('state', 'in', ('draft','sent','to approve'))]}">
+                            <field name="invoice_count" widget="statinfo" string="Vendor Bills"/>
+                            <field name='invoice_ids' invisible="1"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <span class="o_form_label" attrs="{'invisible': [('state','not in',('draft','sent'))]}">System
+                            Doc. No.
+                        </span>
+                        <span class="o_form_label" attrs="{'invisible': [('state','in',('draft','sent'))]}">System Doc.
+                            No.
+                        </span>
+                        <h1 class="d-flex">
+                            <field name="priority" widget="priority" class="me-3"/>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <separator string="Company/Unit Information"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="unit_name"/>
+                            <field name="is_exim" invisible="1"/>
+                            <field name="partner_id" widget="res_partner_many2one" required="False"
+                                   context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
+                                   placeholder="Name, TIN, Email, or Reference"
+                            />
+                            <field name="iec" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="iec_br_code" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="gstin" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                        <group>
+                            <field name="cb_name" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="cb_code" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="erp_job_number" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="client_ref_number" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="business_tags" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Bill of Entry Details"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="be" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="be_date" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="be_type" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="be_type_description"/>
+                            <field name="mode_new" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="port_code" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="port_of_loading" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="country_of_consignment" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="be_status" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                        <group>
+                            <field name="importner_name" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="ad_code" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="prov_final" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="invoice_count_new" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="item_count" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="container" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="pkgs" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="gwt" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Total Assessment and Duty"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="tot_ass_val" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="total_duty" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="int" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                        <group>
+                            <field name="pnlty" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="fine" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="tot_amount" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Submission and Assessment Information"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="submission_date" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="submission_time" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="assessment_date" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="assessment_time" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="examination_date" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                        <group>
+                            <field name="examination_time" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="occ_no" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="ooc_date" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                            <field name="occ_time" attrs="{'readonly': [('state', '=', 'purchase')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="max_line_sequence" invisible="1"/>
+                        <field name="currency_id" groups="base.group_multi_currency" force_save="1"/>
+                        <field name="id" invisible="1"/>
+                        <field name="is_create_moowr" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="currency_id" invisible="1" groups="!base.group_multi_currency"/>
+                        <label for="date_approve" invisible="1"/>
+                        <div name="date_approve" invisible="1"
+                             class="o_row">
+                            <field name="date_approve" invisible="1"/>
+                            <field name="mail_reception_confirmed" invisible="1"/>
+                        </div>
+                        <label for="date_planned" invisible="1"/>
+                        <div name="date_planned_div" class="o_row">
+                            <field name="date_planned"
+                                   invisible="1"/>
+                            <field name="mail_reminder_confirmed" invisible="1"/>
+                        </div>
+                        <label for="receipt_reminder_email" class="d-none" groups="purchase.group_send_reminder"
+                               invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="date_order" invisible="1"/>
+                        <div name="reminder" class="o_row" groups='purchase.group_send_reminder' invisible="1"
+                             title="Automatically send a confirmation email to the vendor X days before the expected receipt date, asking him to confirm the exact date.">
+                            <field name="receipt_reminder_email" invisible="1"/>
+                            <span>Ask confirmation</span>
+                            <div class="o_row oe_inline"
+                                 invisible="1">
+                                <field name="reminder_date_before_receipt" invisible="1"/>
+                                day(s) before
+                                <widget name='toaster_button' button_name="send_reminder_preview"
+                                        title="Preview the reminder email by sending it to yourself."
+                                />
+                            </div>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="Products" name="products">
+                            <field name="order_line"
+                                   widget="section_and_note_one2many"
+                                   mode="tree,kanban"
+                                   context="{'default_state': 'draft'}"
+                                   attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
+                                <tree string="Purchase Order Lines" editable="bottom" width="100px">
+                                    <field name="invsno" width="50px"/>
+                                    <field name="itemsn"/>
+                                    <field name="be_no"/>
+                                    <field name="name" invisible="1"/>
+                                    <field name="invoice_no_new"/>
+                                    <field name="part_code"/>
+                                    <field name="product_id"/>
+                                    <field name="cth"/>
+                                    <field name="assess_value"/>
+                                    <field name="total_duty"/>
+                                    <field name="bcd_rate"/>
+                                    <field name="item_description"/>
+                                    <field name="cqty"/>
+                                    <field name="cuqc"/>
+                                    <field name="upi"/>
+                                    <button name="view_product_line" string="Additional Fields" type="object"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Other Information" name="purchase_delivery_invoice" invisible="1">
+                            <group>
+                                <group name="other_info">
+                                    <field name="user_id" domain="[('share', '=', False)]"
+                                           widget="many2one_avatar_user"/>
+                                    <field name="company_id" groups="base.group_multi_company"
+                                           options="{'no_create': True}"/>
+                                    <field name="origin"/>
+                                </group>
+                                <group name="invoice_info">
+                                    <field name="invoice_status"
+                                           attrs="{'invisible': [('state', 'in', ('draft', 'sent', 'to approve', 'cancel'))]}"/>
+                                    <field name="payment_term_id"
+                                           attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', '=', 'done')]}"
+                                           options="{'no_create': True}"/>
+                                    <field name="fiscal_position_id" options="{'no_create': True}"
+                                           attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', '=', 'done')]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Invoice">
+                            <field name="invoice_tab_ids">
+                                <tree editable="bottom">
+                                    <field name="invsno"/>
+                                    <field name="invoice_no"/>
+                                    <field name="invoice_date"/>
+                                    <field name="be"/>
+                                    <field name="sellers_name"/>
+                                    <field name="suppliers_name"/>
+                                    <field name="inv_value"/>
+                                    <field name="freight"/>
+                                    <field name="insurance"/>
+                                    <button name="view_invoice_line" string="Additional Fields" type="object"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Attachment">
+                            <group>
+                                <group>
+                                    <field name="bill_of_entry"/>
+                                    <field name="awb"/>
+                                    <field name="mawb"/>
+                                </group>
+                                <group>
+                                    <field name="packing_list"/>
+                                    <field name="duty_payment_challan"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Shipment">
+                            <field name="shipment_ids">
+                                <tree editable="bottom">
+                                    <field name="igm_no"/>
+                                    <field name="igm_date"/>
+                                    <field name="inw_date"/>
+                                    <field name="gigmno"/>
+                                    <field name="gigmdt"/>
+                                    <field name="be"/>
+                                    <!--                                    <field name="awb_hbl" invisible="1"/>-->
+                                    <field name="mawb_mbl"/>
+                                    <field name="mawb_date"/>
+                                    <field name="hawb_no"/>
+                                    <field name="hawb_date"/>
+                                    <field name="pkg"/>
+                                    <field name="gw"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Container Details">
+                            <field name="container_ids">
+                                <tree editable="bottom">
+                                    <field name="container_no"/>
+                                    <field name="seal_no"/>
+                                    <field name="truck_no"/>
+                                    <field name="fcl_lcl"/>
+                                    <field name="be"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_boe_tree_view_search" model="ir.ui.view">
+        <field name="name">view.boe.tree.view.search</field>
+        <field name="model">non.moowr</field>
+        <!--        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>-->
+        <field name="arch" type="xml">
+            <search>
+                <field name="be"/>
+                <field name="be_date"/>
+                <field name="be_type"/>
+                <field name="be_type_description"/>
+                <field name="state"/>
+                <field name="be_status"/>
+                <field name="partner_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!--    <record id="view_non_moowr_filter" model="ir.ui.view">-->
+    <!--        <field name="name">request.quotation.select</field>-->
+    <!--        <field name="model">non.moowr</field>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <search string="Search Purchase Order">-->
+    <!--                <field name="name" string="Order" required="False"-->
+    <!--                       filter_domain="['|', '|', ('name', 'ilike', self), ('partner_ref', 'ilike', self)]"/>-->
+    <!--                <field name="partner_id" operator="child_of" required="False"/>-->
+    <!--                <field name="user_id"/>-->
+    <!--                <field name="be_type"/>-->
+    <!--                &lt;!&ndash;                <field name="product_id"/>&ndash;&gt;-->
+    <!--                <field name="origin"/>-->
+    <!--                <filter name="my_purchases" string="My Purchases" domain="[('user_id', '=', uid)]"/>-->
+    <!--                <filter string="Starred" name="starred" domain="[('priority', '=', '1')]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter name="draft" string="RFQs" domain="[('state', 'in', ('draft', 'sent', 'to approve'))]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter name="approved" string="Purchase Orders" domain="[('state', 'in', ('purchase', 'done'))]"/>-->
+    <!--                <filter name="to_approve" string="To Approve" domain="[('state', '=', 'to approve')]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter name="order_date" string="Order Date" date="date_order"/>-->
+    <!--                <filter name="draft_rfqs" string="Draft RFQs" domain="[('state', '=', 'draft')]"/>-->
+    <!--                <filter name="waiting_rfqs" string="Waiting RFQs"-->
+    <!--                        domain="[('state', '=', 'sent'), ('date_order', '&gt;=', datetime.datetime.now())]"/>-->
+    <!--                <filter name="late_rfqs" string="Late RFQs"-->
+    <!--                        domain="[('state', 'in', ['draft', 'sent', 'to approve']),('date_order', '&lt;', datetime.datetime.now())]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter invisible="1" string="Late Activities" name="activities_overdue"-->
+    <!--                        domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"-->
+    <!--                        help="Show all records which has next action date is before today"/>-->
+    <!--                <filter invisible="1" string="Today Activities" name="activities_today"-->
+    <!--                        domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>-->
+    <!--                <filter invisible="1" string="Future Activities" name="activities_upcoming_all"-->
+    <!--                        domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter string="Warnings" name="activities_exception"-->
+    <!--                        domain="[('activity_exception_decoration', '!=', False)]"/>-->
+    <!--                <group expand="0" string="Group By">-->
+    <!--                    <filter string="Vendor" name="vendor" domain="[]"/>-->
+    <!--                    <filter string="Purchase Representative" name="representative" domain="[]"-->
+    <!--                            context="{'group_by': 'user_id'}"/>-->
+    <!--                    <filter string="Order Date" name="order_date" domain="[]" context="{'group_by': 'date_order'}"/>-->
+    <!--                </group>-->
+    <!--            </search>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+    <!--    <record id="non_moowr_view_search" model="ir.ui.view">-->
+    <!--        <field name="name">non.moowr.select</field>-->
+    <!--        <field name="model">non.moowr</field>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <search string="Search Purchase Order">-->
+    <!--                <field name="name" string="Order" required="False"-->
+    <!--                       filter_domain="['|', '|', ('name', 'ilike', self), ('partner_ref', 'ilike', self)]"/>-->
+    <!--                <field name="partner_id" operator="child_of" required="False"/>-->
+    <!--                <field name="user_id"/>-->
+    <!--                &lt;!&ndash;                <field name="product_id"/>&ndash;&gt;-->
+    <!--                <filter name="my_Orders" string="My Orders" domain="[('user_id', '=', uid)]"/>-->
+    <!--                <filter string="Starred" name="starred" domain="[('priority', '=', '1')]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter name="unconfirmed" string="Not Acknowledged"-->
+    <!--                        domain="[('mail_reception_confirmed', '=', False), ('state', '=', 'purchase')]"/>-->
+    <!--                <filter name="not_invoiced" string="Waiting Bills" domain="[('invoice_status', '=', 'to invoice')]"-->
+    <!--                        help="Purchase orders that include lines not invoiced."/>-->
+    <!--                <filter name="invoiced" string="Bills Received" domain="[('invoice_status', '=', 'invoiced')]"-->
+    <!--                        help="Purchase orders that have been invoiced."/>-->
+    <!--                <separator/>-->
+    <!--                <filter name="order_date" string="Order Date" date="date_order"/>-->
+    <!--                <separator/>-->
+    <!--                <filter invisible="1" string="Late Activities" name="activities_overdue"-->
+    <!--                        domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"-->
+    <!--                        help="Show all records which has next action date is before today"/>-->
+    <!--                <filter invisible="1" string="Today Activities" name="activities_today"-->
+    <!--                        domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>-->
+    <!--                <filter invisible="1" string="Future Activities" name="activities_upcoming_all"-->
+    <!--                        domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>-->
+    <!--                <separator/>-->
+    <!--                <filter string="Warnings" name="activities_exception"-->
+    <!--                        domain="[('activity_exception_decoration', '!=', False)]"/>-->
+    <!--                <group expand="0" string="Group By">-->
+    <!--                    <filter string="Vendor" name="vendor" domain="[]"/>-->
+    <!--                    <filter string="Purchase Representative" name="representative" domain="[]"-->
+    <!--                            context="{'group_by': 'user_id'}"/>-->
+    <!--                    <filter string="Order Date" name="order_date" domain="[]" context="{'group_by': 'date_order'}"/>-->
+    <!--                </group>-->
+    <!--            </search>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+
+    <!-- Purchase Orders Kanban View  -->
+    <record model="ir.ui.view" id="view_non_moowr_kanban">
+        <field name="name">non.moowr.kanban</field>
+        <field name="model">non.moowr</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" js_class="purchase_dashboard_kanban" sample="1">
+                <field name="name" required="False"/>
+                <field name="partner_id" readonly="1" required="False"/>
+                <field name="amount_total" invisible="1"/>
+                <field name="state"/>
+                <field name="date_order"/>
+                <field name="currency_id" readonly="1"/>
+                <field name="activity_state"/>
+                <progressbar field="activity_state"
+                             colors='{"planned": "success", "today": "warning", "overdue": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb16">
+                                <field name="priority" widget="priority"/>
+                                <div class="o_kanban_record_headings ms-1">
+                                    <strong class="o_kanban_record_title">
+                                        <span>
+                                            <t t-esc="record.partner_id.value"/>
+                                        </span>
+                                    </strong>
+                                </div>
+                                <strong>
+                                    <field name="amount_total" widget="monetary" invisible="1"/>
+                                </strong>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <span>
+                                        <t t-esc="record.name.value"/>
+                                        <t t-esc="record.date_order.value and record.date_order.value.split(' ')[0] or False"/>
+                                    </span>
+                                    <field name="activity_ids" widget="kanban_activity"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="state" widget="label_selection"
+                                           options="{'classes': {'draft': 'default', 'cancel': 'default', 'done': 'success', 'approved': 'warning'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="non_moowr_view_kanban_without_dashboard" model="ir.ui.view">
+        <field name="name">non.moowr.view.kanban.without.dashboard</field>
+        <field name="model">non.moowr</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_kanban"/>
+        <field name="mode">primary</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="js_class"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="non_moowr_tree" model="ir.ui.view">
+        <field name="name">non.moowr.tree</field>
+        <field name="model">non.moowr</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <tree string="Purchase Order"
+                  decoration-muted="state=='cancel'" sample="1">
+                <field name="priority" optional="show" widget="priority" nolabel="1"/>
+                <field name="partner_ref" optional="hide"/>
+                <field name="name" string="Reference" readonly="1" decoration-info="state in ('draft','sent')"
+                       required="False"/>
+                <field name="be"/>
+                <field name="be_date"/>
+                <field name="be_type_description"/>
+                <field name="state" optional="show"/>
+                <field name="partner_id" readonly="1" required="False"/>
+                <field name="port_code"/>
+                <field name="country_of_consignment"/>
+                <field name="date_order" invisible="not context.get('quotation_only', False)" optional="show"/>
+                <field name="date_approve" invisible="1" optional="show"/>
+                <field name="company_id" readonly="1" options="{'no_create': True}"
+                       groups="base.group_multi_company" optional="show"/>
+                <field name="user_id" optional="show"/>
+                <field name="origin" optional="show" invisible="1"/>
+                <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"
+                       optional="hide"/>
+                <field name="amount_total" sum="Total amount" widget="monetary" optional="show" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="date_planned" invisible="1" optional="show"/>
+                <field name="invoice_status" invisible="context.get('quotation_only', False)" optional="hide"/>
+                <field name="activity_exception_decoration" widget="activity_exception"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Unfortunately we want the purchase kpis table to only show up in some list views,
+         so we have to duplicate code to support both view versions -->
+    <record id="non_moowr_kpis_tree" model="ir.ui.view">
+        <field name="name">non.moowr.inherit.purchase.order.tree</field>
+        <field name="model">non.moowr</field>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <tree string="Non Moowr" decoration-info="state in ['draft', 'sent']"
+                  decoration-muted="state == 'cancel'"
+                  class="o_purchase_order" js_class="purchase_dashboard_list" sample="1">
+                <header>
+                    <button name="action_create_invoice" type="object" string="Create Bills"/>
+                </header>
+                <field name="priority" optional="show" widget="priority" nolabel="1"/>
+                <field name="partner_ref" optional="hide"/>
+                <field name="name" string="Reference" readonly="1" decoration-bf="1" required="False"/>
+                <field name="date_approve" invisible="context.get('quotation_only', False)" optional="show"/>
+                <field name="partner_id" readonly="1" required="False"/>
+                <field name="company_id" readonly="1" options="{'no_create': True}"
+                       groups="base.group_multi_company" optional="show"/>
+                <field name="date_planned" invisible="1" optional="show"/>
+                <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="date_order"
+                       attrs="{'invisible': ['|', '|', ('state', '=', 'purchase'), ('state', '=', 'done'), ('state', '=', 'cancel')]}"
+                       invisible="not context.get('quotation_only', False)" widget="remaining_days" optional="show"/>
+                <field name="activity_ids" widget="list_activity" optional="show"/>
+                <field name="origin" optional="show"/>
+                <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"
+                       optional="hide"/>
+                <field name="amount_total" sum="Total amount" widget="monetary" optional="show"
+                       decoration-bf="state in ['purchase', 'done']" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" optional="show" widget="badge"
+                       decoration-success="state == 'purchase' or state == 'done'"
+                       decoration-warning="state == 'to approve'"
+                       decoration-info="state == 'draft' or state == 'sent'"/>
+                <field name="invoice_status" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="non_moowr_view_tree" model="ir.ui.view">
+        <field name="name">non.moowr.view.tree</field>
+        <field name="model">non.moowr</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'cancel'"
+                  decoration-info="invoice_status == 'to invoice'"
+                  string="Purchase Order"
+                  class="o_purchase_order"
+                  sample="1">
+                <header>
+                    <button name="action_create_invoice" type="object" string="Create Bills"/>
+                </header>
+                <field name="priority" optional="show" widget="priority" nolabel="1"/>
+                <field name="partner_ref" optional="hide"/>
+                <field name="name" string="Reference" readonly="1" decoration-bf="1"
+                       decoration-info="state in ('draft','sent')" required="False"/>
+                <field name="date_approve" widget="date" invisible="1"
+                       optional="show"/>
+                <field name="partner_id" required="False"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"
+                       optional="show"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="date_order" optional="show" invisible="1"/>
+                <field name="activity_ids" widget="list_activity" optional="show"/>
+                <field name="origin" optional="show"/>
+                <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"
+                       optional="hide"/>
+                <field name="amount_total" sum="Total amount" widget="monetary" optional="show" decoration-bf="1"
+                       invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" invisible="1"/>
+                <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'invoiced'"
+                       decoration-info="invoice_status == 'to invoice'" optional="show"/>
+                <field name="date_planned" invisible="1" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="non_moowr_view_activity" model="ir.ui.view">
+        <field name="name">non.moowr.activity</field>
+        <field name="model">non.moowr</field>
+        <field name="arch" type="xml">
+            <activity string="Purchase Order">
+                <templates>
+                    <div t-name="activity-box">
+                        <div>
+                            <field name="name" display="full" required="False"/>
+                            <field name="partner_id" muted="1" display="full" required="False"/>
+                        </div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+    <record id="non_moowr_line_tree" model="ir.ui.view">
+        <field name="name">non.moowr.line.tree</field>
+        <field name="model">non.moowr.line</field>
+        <field name="arch" type="xml">
+            <tree string="Purchase Order Lines" create="false">
+                <field name="order_id"/>
+                <!--                <field name="name" required="False"/>-->
+                <!--                <field name="partner_id" string="Vendor" required="False"/>-->
+                <!--                <field name="product_id"/>-->
+                <!--                <field name="price_unit" required="False"/>-->
+                <!--                <field name="product_qty" required="False"/>-->
+                <!--                <field name="product_uom" groups="uom.group_uom"/>-->
+                <!--                <field name="price_subtotal" widget="monetary"/>-->
+                <!--                <field name="currency_id" invisible="1"/>-->
+                <!--                <field name="date_planned" widget="date"/>-->
+            </tree>
+        </field>
+    </record>
+
+    <record id="non_moowr_line_form2" model="ir.ui.view">
+        <field name="name">non.moowr.line.form2</field>
+        <field name="model">non.moowr.line</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <form string="Purchase Order Line" create="false">
+                <sheet>
+                    <label for="order_id"/>
+                    <h1>
+                        <field name="order_id" class="oe_inline"/>
+                        <!--                        <label string="," for="date_order" attrs="{'invisible':[('date_order','=',False)]}"/>-->
+                        <!--                        <field name="date_order" class="oe_inline"/>-->
+                    </h1>
+                    <!--                    <label for="partner_id"/>-->
+                    <!--                    <h2>-->
+                    <!--                        <field name="partner_id" required="False"/>-->
+                    <!--                    </h2>-->
+                    <!--                    <group>-->
+                    <!--                        <group>-->
+                    <!--&lt;!&ndash;                            <field name="product_id" readonly="1"/>&ndash;&gt;-->
+                    <!--                            <label for="product_qty"/>-->
+                    <!--                            <div class="o_row">-->
+                    <!--                                <field name="product_qty" readonly="1" required="False"/>-->
+                    <!--                                <field name="product_uom" readonly="1" groups="uom.group_uom"/>-->
+                    <!--                            </div>-->
+                    <!--&lt;!&ndash;                            <field name="price_unit" required="False"/>&ndash;&gt;-->
+                    <!--                        </group>-->
+                    <!--                        <group>-->
+                    <!--                            <field name="taxes_id" widget="many2many_tags"-->
+                    <!--                                   domain="[('type_tax_use', '=', 'purchase')]"/>-->
+                    <!--                            <field name="date_planned" widget="date" readonly="1"/>-->
+                    <!--                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>-->
+                    <!--                            <field name="analytic_distribution" widget="analytic_distribution"-->
+                    <!--                                   groups="analytic.group_analytic_accounting"/>-->
+                    <!--                        </group>-->
+                    <!--                    </group>-->
+                    <!--&lt;!&ndash;                    <field name="name" required="False"/>&ndash;&gt;-->
+                    <!--                    <separator string="Manual Invoices"/>-->
+                    <!--                    <field name="invoice_lines"/>-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="non_moowr_line_search" model="ir.ui.view">
+        <field name="name">non.moowr.line.search</field>
+        <field name="model">non.moowr.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Purchase Order">
+                <field name="order_id"/>
+                <!--                <field name="product_id"/>-->
+                <!--                <field name="partner_id" string="Vendor" required="False"/>-->
+                <!--                <filter name="hide_cancelled" string="Hide cancelled lines" domain="[('state', '!=', 'cancel')]"/>-->
+                <!--                <group expand="0" string="Group By">-->
+                <!--                    <filter name="groupby_supplier" string="Vendor"/>-->
+                <!--                    <filter name="groupby_product" string="Product"/>-->
+                <!--                    <filter string="Order Reference" name="order_reference" domain="[]"-->
+                <!--                            context="{'group_by' :'order_id'}"/>-->
+                <!--                    <filter string="Status" name="status" domain="[]" context="{'group_by' : 'state'}"/>-->
+                <!--                </group>-->
+            </search>
+        </field>
+    </record>
+
+    <record id="purchase_history_tree" model="ir.ui.view">
+        <field name="name">purchase.history.tree</field>
+        <field name="model">non.moowr.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" default_order="order_id asc">
+                <field name="order_id" widget="many2one"/>
+                <!--                <field name="date_approve" widget="date"/>-->
+                <!--&lt;!&ndash;                <field name="partner_id" required="False"/>&ndash;&gt;-->
+                <!--                <field name="product_uom_qty"/>-->
+                <!--                <field name="price_unit" required="False"/>-->
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_purchase_history" model="ir.actions.act_window">
+        <field name="res_model">non.moowr.line</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="purchase.purchase_history_tree"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No purchase order were made for this product yet!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_purchase_batch_bills" model="ir.actions.server">
+        <field name="name">Create Vendor Bills</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name='groups_id' eval="[(4, ref('account.group_account_invoice'))]"/>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+            action = records.action_create_invoice()
+        </field>
+    </record>
+
+    <record id="action_purchase_send_reminder" model="ir.actions.server">
+        <field name="name">Send Reminder</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name='groups_id' eval="[(4, ref('purchase.group_send_reminder'))]"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+            action = records._send_reminder_mail(send_single=True)
+        </field>
+    </record>
+
+    <record id="action_accrued_expense_entry" model="ir.actions.act_window">
+        <field name="name">Accrued Expense Entry</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.accrued.orders.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="groups_id" eval="[(4, ref('account.group_account_user'))]"/>
+        <field name="target">new</field>
+    </record>
+
+    <!--    <record id="action_rfq_form" model="ir.actions.act_window">-->
+    <!--        <field name="name">Requests for Quotation</field>-->
+    <!--        <field name="res_model">non.moowr</field>-->
+    <!--        <field name="view_mode">form</field>-->
+    <!--        <field name="view_id" ref="purchase.purchase_order_form"/>-->
+    <!--        <field name="search_view_id" ref="view_purchase_order_filter"/>-->
+    <!--        <field name="target">main</field>-->
+    <!--    </record>-->
+
+    <record id="non_moowr_action" model="ir.actions.act_window">
+        <field name="name">Bills of Entry</field>
+        <field name="res_model">non.moowr</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+               eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('slc_custom.non_moowr_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('slc_custom.non_moowr_form')})]"/>
+    </record>
+    <menuitem id="menu_non_moowr"
+              name="Bills of Entry" parent="purchase.menu_procurement_management"
+              action="non_moowr_action"
+              sequence="100"/>
+
+    <!--    <record id="boe_action" model="ir.actions.act_window">-->
+    <!--        <field name="name">BOE</field>-->
+    <!--        <field name="res_model">non.moowr</field>-->
+    <!--        <field name="view_mode">form</field>-->
+    <!--        <field name="view_id" ref="boe_form"/>-->
+    <!--    </record>-->
+
+    <record id="boe_form" model="ir.ui.view">
+        <field name="name">boe.form</field>
+        <field name="model">non.moowr</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <form string="BOE Header">
+                <sheet>
+                    <group>
+                        <separator string="Group 1"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="bond_no_1"/>
+                            <field name="port_1"/>
+                            <field name="bond_cd_1"/>
+                            <field name="debt_amt_1"/>
+                            <field name="bg_amt_1"/>
+                        </group>
+                        <group>
+                            <field name="bond_no_2"/>
+                            <field name="port_2"/>
+                            <field name="bond_cd_2"/>
+                            <field name="debt_amt_2"/>
+                            <field name="bg_amt_2"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Group 2"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="sr_no_1"/>
+                            <field name="challan_no_1"/>
+                            <field name="paid_on_1"/>
+                            <field name="amount_rs_1"/>
+                        </group>
+                        <group>
+                            <field name="sr_no_2"/>
+                            <field name="challan_no_2"/>
+                            <field name="paid_no_2"/>
+                            <field name="amount_rs_2"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Group 3"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="wbe_no"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="wbe_site"/>
+                            <field name="wh_code"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Group 4"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="bcd"/>
+                            <field name="acd"/>
+                            <field name="sws"/>
+                            <field name="nccd"/>
+                            <field name="add"/>
+                            <field name="cvd"/>
+                            <field name="igst"/>
+                        </group>
+                        <group>
+                            <field name="g_cess"/>
+                            <field name="sg"/>
+                            <field name="saed"/>
+                            <field name="gsia"/>
+                            <field name="tta"/>
+                            <field name="health"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Group 5"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="country_of_origin"/>
+                            <field name="port_of_shipment"/>
+
+                        </group>
+                        <group>
+                            <field name="importer_address"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Group 6"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="adv_be"/>
+                            <field name="exam"/>
+                        </group>
+                        <group>
+                            <field name="assess"/>
+                            <field name="first_check"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Group 7"
+                                   style="font-size: 17px; color: #71639e"/>
+                        <group>
+                            <field name="status"/>
+                            <field name="def_be"/>
+                            <field name="kacha"/>
+                            <field name="sec"/>
+                        </group>
+                        <group>
+                            <field name="reimp"/>
+                            <field name="hss"/>
+                            <field name="aeo"/>
+                            <field name="ucr"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_line_form" model="ir.ui.view">
+        <field name="name">product.line.form</field>
+        <field name="model">non.moowr.line</field>
+        <field name="arch" type="xml">
+            <form string="Items">
+                <sheet>
+                    <group>
+                        <separator string="Part 3.A - ITEM Details"
+                                   style="font-size: 19px; color: #71639e"/>
+                        <group>
+                            <field name="ceth" optional="hide"/>
+                            <field name="coo"/>
+                            <field name="sqty"/>
+                            <field name="suqc"/>
+                            <field name="fs"/>
+                            <field name="pq"/>
+                            <field name="dc"/>
+                            <field name="wc"/>
+                            <field name="aq"/>
+                            <field name="sch"/>
+                            <field name="stnd_pr"/>
+                            <field name="rsp"/>
+                            <field name="reimp"/>
+                            <field name="prov"/>
+                            <field name="end_use"/>
+                            <field name="prodn"/>
+                            <field name="cntrl"/>
+                            <field name="qualfr"/>
+                            <field name="contnt"/>
+                            <field name="stmnt"/>
+                            <field name="sub_docs"/>
+                            <field name="ref_no"/>
+                            <field name="ref_dt"/>
+                            <field name="prt_cd"/>
+                            <field name="lab"/>
+                            <field name="p_f"/>
+                            <field name="sws_duty_fg"/>
+                            <field name="load_date"/>
+                            <field name="load_pf"/>
+                            <field name="prev_be_no"/>
+                            <field name="be_date"/>
+                            <field name="prt_cd_new"/>
+                            <field name="prev_unitprice"/>
+                            <field name="prev_currency_code"/>
+                            <field name="notn_no"/>
+                            <field name="slno"/>
+                            <field name="frt"/>
+                            <field name="ins"/>
+                            <field name="duty"/>
+                            <field name="sb_no"/>
+                            <field name="sb_dt"/>
+                        </group>
+                        <group>
+                            <field name="port_cd"/>
+                            <field name="sinv"/>
+                            <field name="simtemn"/>
+                            <field name="type"/>
+                            <field name="manufact_cd" string="MANUFACT CD"/>
+                            <field name="source_cy"/>
+                            <field name="trans_cy"/>
+                            <field name="address"/>
+                            <field name="accessory_item_details"/>
+                            <field name="lic_slno"/>
+                            <field name="lic_no"/>
+                            <field name="lic_date"/>
+                            <field name="code"/>
+                            <field name="port"/>
+                            <field name="debit_value"/>
+                            <field name="qty"/>
+                            <field name="debit_qty"/>
+                            <field name="certificate_number"/>
+                            <field name="date"/>
+                            <field name="type_new"/>
+                            <field name="prc_level"/>
+                            <field name="iec"/>
+                            <field name="branch_slno"/>
+                            <field name="info_type"/>
+                            <field name="qualifier"/>
+                            <field name="info_cd"/>
+                            <field name="info_text"/>
+                            <field name="info_msr"/>
+                            <field name="uqc"/>
+                            <field name="c_sno"/>
+                            <field name="new_name"/>
+                            <field name="code_new"/>
+                            <field name="percentage"/>
+                            <field name="yield_pct"/>
+                            <field name="ing"/>
+                            <field name="control_type"/>
+                            <field name="location"/>
+                            <field name="srt_dt"/>
+                            <field name="end_dt"/>
+                            <field name="res_cd"/>
+                            <field name="res_text"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Part 3.B-ITEM Duty"
+                                   style="font-size: 19px; color: #71639e"/>
+                        <group>
+                            <separator string="BCD Details (BCD)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="bcd_notn_no"/>
+                                <field name="bcd_notn_sno"/>
+                                <field name="bcd_rate"/>
+                                <field name="bcd_amount"/>
+                                <field name="bcd_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="ACD Details (ACD)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="acd_notn_no"/>
+                                <field name="acd_notn_sno"/>
+                                <field name="acd_rate"/>
+                                <field name="acd_amount"/>
+                                <field name="acd_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="SWS Details (SWS)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="sws_notn_no"/>
+                                <field name="sws_notn_sno"/>
+                                <field name="sws_rate"/>
+                                <field name="sws_amount"/>
+                                <field name="sws_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="SAD Details (SAD)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="sad_notn_no"/>
+                                <field name="sad_notn_sno"/>
+                                <field name="sad_rate"/>
+                                <field name="sad_amount"/>
+                                <field name="sad_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="IGST Details (IGST)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="igst_notn_no"/>
+                                <field name="igst_notn_sno"/>
+                                <field name="igst_rate"/>
+                                <field name="igst_amount"/>
+                                <field name="igst_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="G.CESS Details (G.CESS)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="g_cess_notn_no"/>
+                                <field name="g_cess_notn_sno"/>
+                                <field name="g_cess_rate"/>
+                                <field name="g_cess_amount"/>
+                                <field name="g_cess_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="ADD Details (ADD)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="add_notn_no"/>
+                                <field name="add_notn_sno"/>
+                                <field name="add_rate"/>
+                                <field name="add_amount"/>
+                                <field name="add_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="CVD Details (CVD)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="cvd_notn_no"/>
+                                <field name="cvd_notn_sno"/>
+                                <field name="cvd_rate"/>
+                                <field name="cvd_amount"/>
+                                <field name="cvd_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="SG Details (SG)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="sg_notn_no"/>
+                                <field name="sg_notn_sno"/>
+                                <field name="sg_rate"/>
+                                <field name="sg_amount"/>
+                                <field name="sg_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="T. Value Details (T.Value)"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="t_value_notn_no"/>
+                                <field name="t_value_notn_sno"/>
+                                <field name="t_value_rate"/>
+                                <field name="t_value_amount"/>
+                                <field name="t_value_duty_fg"/>
+                            </group>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Part 3.C - OTHER DUTIES"
+                                   style="font-size: 19px; color: #71639e"/>
+                        <group>
+                            <separator string="SP EXD"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="sp_exd_notn_no"/>
+                                <field name="sp_exd_notn_sno"/>
+                                <field name="sp_exd_rate"/>
+                                <field name="sp_exd_amount"/>
+                                <field name="sp_exd_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="CHCESS"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="chcess_notn_no"/>
+                                <field name="chcess_notn_sno"/>
+                                <field name="chcess_rate"/>
+                                <field name="chcess_amount"/>
+                                <field name="chcess_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="TTA"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="tta_notn_no"/>
+                                <field name="tta_notn_sno"/>
+                                <field name="tta_rate"/>
+                                <field name="tta_amount"/>
+                                <field name="tta_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="CESS"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="cess_notn_no"/>
+                                <field name="cess_notn_sno"/>
+                                <field name="cess_rate"/>
+                                <field name="cess_amount"/>
+                                <field name="cess_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="CAIDC"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="caidc_notn_no"/>
+                                <field name="caidc_notn_sno"/>
+                                <field name="caidc_rate"/>
+                                <field name="caidc_amount"/>
+                                <field name="caidc_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="EAIDC"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="eaidc_notn_no"/>
+                                <field name="eaidc_notn_sno"/>
+                                <field name="eaidc_rate"/>
+                                <field name="eaidc_amount"/>
+                                <field name="eaidc_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="CUS EDC"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="cus_edc_notn_no"/>
+                                <field name="cus_edc_notn_sno"/>
+                                <field name="cus_edc_rate"/>
+                                <field name="cus_edc_amount"/>
+                                <field name="cus_edc_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="CUS HEC"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="cus_hec_notn_no"/>
+                                <field name="cus_hec_notn_sno"/>
+                                <field name="cus_hec_rate"/>
+                                <field name="cus_hec_amount"/>
+                                <field name="cus_hec_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="NCD"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="ncd_notn_no"/>
+                                <field name="ncd_notn_sno"/>
+                                <field name="ncd_rate"/>
+                                <field name="ncd_amount"/>
+                                <field name="ncd_duty_fg"/>
+                            </group>
+                        </group>
+                        <group>
+                            <separator string="AGGR"
+                                       style="font-size: 17px; color: #71639edb"/>
+                            <group>
+                                <field name="aggr_notn_no"/>
+                                <field name="aggr_notn_sno"/>
+                                <field name="aggr_rate"/>
+                                <field name="aggr_amount"/>
+                                <field name="aggr_duty_fg"/>
+                            </group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="invoice_form" model="ir.ui.view">
+        <field name="name">invoice.form</field>
+        <field name="model">invoice.nonmoowr.line</field>
+        <field name="arch" type="xml">
+            <form string="Invoice Item">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="purchase_order_no_and_dt" optional="hide"/>
+                            <field name="lc_no_dt" optional="hide"/>
+                            <field name="contract_no_date" optional="hide"/>
+                            <field name="buyers_name" optional="hide"/>
+                            <field name="buyers_address" optional="hide"/>
+                            <field name="sellers_address" optional="hide"/>
+                            <field name="suppliers_address" optional="hide"/>
+                            <field name="third_party_name" optional="hide"/>
+                            <field name="third_party_address" optional="hide"/>
+                            <field name="aeo" optional="hide"/>
+                            <field name="ad_code" optional="hide"/>
+                            <field name="hss" optional="hide"/>
+                            <field name="loading" optional="hide"/>
+                            <field name="commn" optional="hide"/>
+                            <field name="pay_terms"/>
+                            <field name="valuation_method" optional="hide"/>
+                            <field name="currency"/>
+                            <field name="incoterm"/>
+                            <field name="reltd"/>
+                        </group>
+                        <group>
+                            <field name="svb_ch" optional="hide"/>
+                            <field name="svb_no" optional="hide"/>
+                            <field name="date" optional="hide"/>
+                            <field name="loa" optional="hide"/>
+                            <field name="c_b" optional="hide"/>
+                            <field name="coc" optional="hide"/>
+                            <field name="cop" optional="hide"/>
+                            <field name="hnd_chg" optional="hide"/>
+                            <field name="gs" optional="hide"/>
+                            <field name="doc_chg" optional="hide"/>
+                            <field name="coo" optional="hide"/>
+                            <field name="r_lf" optional="hide"/>
+                            <field name="oth_cost" optional="hide"/>
+                            <field name="ld_uld" optional="hide"/>
+                            <field name="ws" optional="hide"/>
+                            <field name="otc" optional="hide"/>
+                            <field name="misc_charge"/>
+                            <field name="ass_value"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,1 +1,0 @@
-from . import inherit_customer_portal

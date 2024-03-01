@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="bond_master_view_form" model="ir.ui.view">
+        <field name="name">bond.master.view.form</field>
+        <field name="model">bond.master</field>
+        <field name="arch" type="xml">
+            <form string="Bond Master">
+                <header>
+                    <button name="edit_only_button" string="EDIT" type="object" class="btn-primary"
+                            data-hotkey="q" attrs="{'invisible': [('is_edit', '=', True)]}"/>
+                    <button name="readonly_button" string="READONLY" type="object" class="btn-primary"
+                            data-hotkey="q" attrs="{'invisible': [('is_edit', '=', False)]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="bond_number" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                            <field name="is_edit" invisible="1"/>
+                            <field name="bond_type" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                            <field name="issue_date" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                            <field name="validity_date" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="value" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                            <field name="customs_station" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="bond_master_view_tree" model="ir.ui.view">
+        <field name="name">bond.master.view.form</field>
+        <field name="model">bond.master</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="bond_number"/>
+                <field name="bond_type"/>
+                <field name="issue_date"/>
+                <field name="validity_date"/>
+                <field name="value"/>
+                <field name="customs_station"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="bond_master_action" model="ir.actions.act_window">
+        <field name="name">Bond</field>
+        <field name="res_model">bond.master</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!--    MenuItems added in Crm Configuration-->
+
+
+    <!--    <menuitem id="menu_hsn_root"-->
+    <!--              name="HSN" sequence="1"/>-->
+
+    <menuitem id="menu_bond_master_action"
+              name="Bond Master" parent="slc_custom.menu_hsn_root" action="bond_master_action"
+              sequence="5"/>
+</odoo>

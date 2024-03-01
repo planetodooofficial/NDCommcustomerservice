@@ -1,0 +1,195 @@
+<odoo>
+
+    <record id="view_sale_form" model="ir.ui.view">
+        <field name="name">view_sale_form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="after">
+                <field name="exim_txn_category"/>
+                <field name="exim_txn_subcategory_id"/>
+                <field name="inventory_interface" string="Inventory Link"/>
+                <field name="mode"/>
+                <field name="boe"/>
+                <field name="boe_date"/>
+                <field name="erp_job_number"/>
+                <field name="max_line_sequence" invisible="1"/>
+                <field name="is_sale" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_template_id']"
+                   position="after">
+                <field name="invoice_no"/>
+                <field name="be_line_no"/>
+                <field name="invsno"/>
+                <field name="itemsn"/>
+                <field name="lot_id"/>
+                <field name="sequence2"/>
+                <field name="health_cess" optional="hide"/>
+                <field name="nccd" optional="hide"/>
+                <field name="acd" optional="hide"/>
+                <field name="sad" optional="hide"/>
+                <field name="g_cess" optional="hide"/>
+                <field name="add" optional="hide"/>
+                <field name="cvd" optional="hide"/>
+                <field name="sg" optional="hide"/>
+                <field name="saed" optional="hide"/>
+                <field name="gsia" optional="hide"/>
+                <field name="spexd" optional="hide"/>
+                <field name="chcess" optional="hide"/>
+                <field name="cess" optional="hide"/>
+                <field name="caidc" optional="hide"/>
+                <field name="eaidc" optional="hide"/>
+                <field name="cusedc" optional="hide"/>
+                <field name="cushec" optional="hide"/>
+                <field name="ncd" optional="hide"/>
+                <field name="aggr" optional="hide"/>
+                <field name="exchange_rate" optional="hide"/>
+                <field name="cif_value" optional="hide"/>
+                <field name="assessable_value" optional="hide"/>
+                <field name="basic_duty_rate" optional="hide"/>
+                <field name="total_basic_duty" optional="hide"/>
+                <field name="sws_rate" optional="hide"/>
+                <field name="sws_duty_amt" optional="hide"/>
+                <field name="igst_rate" optional="hide"/>
+                <field name="igst_amount" optional="hide"/>
+                <field name="total_duty" optional="hide"/>
+                <field name="country_of_origin" optional="hide"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']"
+                   position="after">
+                <button name="view_order_line" string="Additional fields" type="object"/>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='payment_term_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[@name='order_details']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']" position="attributes">
+                <attribute name="context">{'default_sequence': max_line_sequence}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='name']"
+                   position="after">
+                <field name="material_code"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_uom_qty']"
+                   position="after">
+                <field name="unit"/>
+                <field name="cth"/>
+            </xpath>
+            <notebook>
+                <page string="Invoice">
+                    <field name="invoice_tab_ids">
+                        <tree editable="bottom">
+                            <field name="invoice_number"/>
+                            <field name="invoice_date"/>
+                            <field name="supplier"/>
+                            <field name="inco_terms"/>
+                            <field name="invoice_total" string="Invoice Total(Cur)"/>
+                            <field name="invoice_cur" string="Invoice Currency"/>
+                            <field name="invoice_amount" string="Invoice Amount(INR)"/>
+                            <field name="related_party"/>
+                            <field name="invoice_attachment"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+            <notebook>
+                <page string="Attachment">
+                    <group>
+                        <group>
+                            <field name="bill_of_entry"/>
+                            <field name="awb"/>
+                            <field name="mawb"/>
+                        </group>
+                        <group>
+                            <field name="packing_list"/>
+                            <field name="duty_payment_challan"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+            <notebook>
+                <page string="Inventory">
+                </page>
+            </notebook>
+        </field>
+    </record>
+    <record id="sale_order_line_view_form" model="ir.ui.view">
+        <field name="name">sale.order.line.view.form</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <form string="Order Line">
+                <sheet>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="invoice_no"/>
+                            <field name="be_line_no"/>
+                        </group>
+                        <group>
+                            <field name="sequence2" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="health_cess"/>
+                            <field name="nccd"/>
+                            <field name="acd"/>
+                            <field name="cvd"/>
+                            <field name="sg"/>
+                            <field name="saed"/>
+                            <field name="cess"/>
+                            <field name="caidc"/>
+                            <field name="eaidc"/>
+                            <field name="ncd"/>
+                        </group>
+                        <group>
+                            <field name="sad"/>
+                            <field name="g_cess"/>
+                            <field name="add"/>
+                            <field name="gsia"/>
+                            <field name="spexd"/>
+                            <field name="chcess"/>
+                            <field name="cusedc"/>
+                            <field name="cushec"/>
+                            <field name="aggr"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="exchange_rate"/>
+                            <field name="cif_value"/>
+                            <field name="assessable_value"/>
+                            <field name="sws_duty_amt"/>
+                            <field name="igst_rate"/>
+                            <field name="igst_amount"/>
+                        </group>
+                        <group>
+                            <field name="basic_duty_rate"/>
+                            <field name="total_basic_duty"/>
+                            <field name="sws_rate"/>
+                            <field name="total_duty"/>
+                            <field name="country_of_origin"/>
+                            <field name="invoice_currency"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+<!--    <record id="sale_order_gst_view_form" model="ir.ui.view">-->
+<!--        <field name="name">sale_order_gst_view_form</field>-->
+<!--        <field name="model">sale.order</field>-->
+<!--        <field name="inherit_id" ref="l10n_in_sale.view_order_form_inherit_l10n_in_sale"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//field[@name='l10n_in_gst_treatment']" position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
+
+</odoo>

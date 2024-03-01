@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_gstinunit_data,access_gstinunit_data,model_gstinunit_data,base.group_user,1,1,1,1
-access_gstin_o2m,access_gstin_o2m,model_gstin_o2m,base.group_user,1,1,1,1
-

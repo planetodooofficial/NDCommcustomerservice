@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="notification_serial_master_view_form" model="ir.ui.view">
+        <field name="name">notification.serial.master.view.form</field>
+        <field name="model">notification.serial.master</field>
+        <field name="arch" type="xml">
+            <form string="Notification Serial No Master">
+                <header>
+                    <button name="validate_serial_notification" string="Validate" type="object"/>
+                    <field name="notification_serial_stage" widget="statusbar" options="{'fold_field': 'fold'}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="serial_uid"/>
+                            <field name="notification_serial_description"/>
+                            <field name="notification_serial_number"/>
+                            <field name="notification_serial_date"/>
+                        </group>
+                        <group>
+                            <field name="notification_serial_remarks"/>
+                            <field name="notification_serial_no"/>
+                            <field name="affected_hsn"/>
+                        </group>
+                        <group colspan="10">
+                            <field name="notification_serial_no_text" widget="html" style="max-height: 200px; max-width: 1100px; overflow-y: scroll;"/>
+                            <field name="notification_serial_main_text" widget="html" style="max-height: 200px; max-width: 1100px; overflow-y: scroll;"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" options="{'post_refresh':True}"
+                           help="Follow this project to automatically track the events associated to tasks and issues of this project."
+                           groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="notification_serial_master_view_tree" model="ir.ui.view">
+        <field name="name">notification.serial.master.view.form</field>
+        <field name="model">notification.serial.master</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="serial_uid"/>
+                <field name="notification_serial_description"/>
+                <field name="notification_serial_number"/>
+                <field name="notification_serial_date"/>
+                <field name="notification_serial_main_text"/>
+                <field name="notification_serial_remarks"/>
+                <field name="notification_serial_no"/>
+                <field name="notification_serial_no_text"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="notification_serial_master_action" model="ir.actions.act_window">
+        <field name="name">Notification Serial</field>
+        <field name="res_model">notification.serial.master</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!--    MenuItems added in Crm Configuration-->
+
+
+    <!--    <menuitem id="menu_hsn_root"-->
+    <!--              name="HSN" sequence="1"/>-->
+
+    <menuitem id="menu_notification_serial_master_action"
+              name="Notification Serial Master" parent="slc_custom.menu_hsn_root"
+              action="notification_serial_master_action"
+              sequence="4"/>
+</odoo>

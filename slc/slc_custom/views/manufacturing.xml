@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_manufacturing_form" model="ir.ui.view">
+        <field name="name">view_manufacturing_form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group/group[2]/field[@name='production_location_id']" position="attributes">
+                <attribute name="invisible">0</attribute>
+                <attribute name="readonly">0</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='components']/field[@name='move_raw_ids']/tree/field[@name='location_dest_id']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+<!--            <xpath expr="//group//field[@name='lot_producing_id']" position="before">-->
+<!--                <field name="lot_sn" attrs="{'invisible': [('product_tracking','!=','serial')], 'required': [('state', 'not in', ['draft', 'cancel']),('product_tracking', 'not in', ('none','lot'))], 'readonly':[('state', 'in',['done','cancel'])]}"/>-->
+<!--            </xpath>-->
+<!--            <xpath expr="//field[@name='lot_producing_id']" position="attributes">-->
+<!--                <attribute name="attrs">{'invisible': [('product_tracking', 'in', ('none', False, 'serial'))]}</attribute>-->
+<!--            </xpath>-->
+<!--            <xpath expr="//button[@name='action_generate_serial']" position="attributes">-->
+<!--                <attribute name="attrs">{'invisible': ['|', ('product_tracking', 'in', ('none', False)), ('lot_producing_id', '!=', False)]}</attribute>-->
+
+        </field>
+    </record>
+</odoo>

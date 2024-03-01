@@ -1,0 +1,9 @@
+<!--<odoo>-->
+<!--    <data>-->
+<!--        <template id="assets_backend" name="SLC Custom" inherit_id="web.assets_backend">-->
+<!--            <xpath expr="." position="inside">-->
+<!--                <link rel="stylesheet" href="/slc_custom/static/src/scss/custom.scss"/>-->
+<!--            </xpath>-->
+<!--        </template>-->
+<!--    </data>-->
+<!--</odoo>-->

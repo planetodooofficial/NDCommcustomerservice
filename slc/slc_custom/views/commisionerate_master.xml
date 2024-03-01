@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="commisionerate_master_view_form" model="ir.ui.view">
+        <field name="name">commisionerate.master.view.form</field>
+        <field name="model">commisionerate.master</field>
+        <field name="arch" type="xml">
+            <form string="Commisionerate Master">
+                <sheet>
+                    <group>
+                            <field name="commisionerate_name"/>
+                            <field name="commisionerate_address"/>
+                            <field name="commisionerate_state"/>
+                            <field name="country" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="commisionerate_master_view_tree" model="ir.ui.view">
+        <field name="name">commisionerate.master.view.form</field>
+        <field name="model">commisionerate.master</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="commisionerate_name"/>
+                <field name="commisionerate_address"/>
+                <field name="commisionerate_state"/>
+                <field name="country" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="commisionerate_master_action" model="ir.actions.act_window">
+        <field name="name">Commisionerate</field>
+        <field name="res_model">commisionerate.master</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_commisionerate_master_action"
+              name="Commisionerate Master" parent="slc_custom.menu_hsn_root" action="commisionerate_master_action"
+              sequence="5"/>
+</odoo>

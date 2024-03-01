@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="exim_sub_category_view_form" model="ir.ui.view">
+        <field name="name">exim.sub.category.view.form</field>
+        <field name="model">exim.sub.category</field>
+        <field name="arch" type="xml">
+            <form string="Exim Transaction Sub category">
+                <sheet>
+                    <group>
+                            <field name="category_name"/>
+                            <field name="sub_category_name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="exim_sub_category_view_tree" model="ir.ui.view">
+        <field name="name">exim.sub.category.view.form</field>
+        <field name="model">exim.sub.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="category_name"/>
+                <field name="sub_category_name"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="exim_sub_category_action" model="ir.actions.act_window">
+        <field name="name">Exim Transaction Sub category</field>
+        <field name="res_model">exim.sub.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_exim_sub_category_action"
+              name="Exim Transaction Sub category" parent="slc_custom.menu_hsn_root" action="exim_sub_category_action"
+              sequence="8"/>
+</odoo>

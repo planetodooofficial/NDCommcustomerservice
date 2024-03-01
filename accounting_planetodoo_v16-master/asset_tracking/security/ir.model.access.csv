@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_asset_tag,access_asset_tag,model_asset_tag,base.group_user,1,1,1,1
-access_asset_type,access_asset_type,model_asset_type,base.group_user,1,1,1,1

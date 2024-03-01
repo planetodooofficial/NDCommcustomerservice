@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="stock_lot_form_inherit" model="ir.ui.view">
+            <field name="name">stock.lot.form.inherit</field>
+            <field name="model">stock.lot</field>
+            <field name="inherit_id" ref="stock.view_production_lot_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group[@name='main_group']" position="replace">
+                    <group>
+                        <separator string="BE and Other Information"
+                                   style="font-size: 17px; color: #71639edb"/>
+                        <group>
+                            <field name="boe_source_document"/>
+                            <field name="invsno"/>
+                            <field name="date"/>
+                            <field name="product_id"/>
+                            <field name="ref"/>
+                        </group>
+                        <group>
+                            <field name="source_document"/>
+                            <field name="itemsn"/>
+                            <field name="country_of_origin"/>
+                            <field name="product_qty"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Import Duty Details(Per Unit)"
+                                   style="font-size: 17px; color: #71639edb"/>
+                        <group>
+                            <field name="assessable_value"/>
+                            <field name="sws_rate"/>
+                            <field name="basic_duty_rate"/>
+                            <field name="igst_rate"/>
+                            <field name="exchange_rate"/>
+                        </group>
+                        <group>
+                            <field name="total_duty"/>
+                            <field name="sws_duty_amt"/>
+                            <field name="total_basic_duty"/>
+                            <field name="igst_amount"/>
+                            <field name="cif_value"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string="Other Details(Per Unit)"
+                                   style="font-size: 17px; color: #71639edb"/>
+                        <group>
+                            <field name="health_cess"/>
+                            <field name="nccd"/>
+                            <field name="acd"/>
+                            <field name="eaidc"/>
+                            <field name="cusedc"/>
+                            <field name="cushec"/>
+                            <field name="invoice_currency"/>
+                            <field name="customer_ref"/>
+                            <field name="sad"/>
+                            <field name="g_cess"/>
+                        </group>
+                        <group>
+                            <field name="add"/>
+                            <field name="cvd"/>
+                            <field name="sg"/>
+                            <field name="saed"/>
+                            <field name="gsia"/>
+                            <field name="spexd"/>
+                            <field name="chcess"/>
+                            <field name="cess"/>
+                            <field name="caidc"/>
+                            <field name="ncd"/>
+                            <field name="aggr"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="inherit_stock_location" model="ir.ui.view">
+            <field name="name">stock.location.form.inherit</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group/group[1]/field[@name='replenish_location']" position="after">
+                    <field name="is_production_location"/>
+                    <field name="is_virtual_location"/>
+                </xpath>
+            </field>
+        </record>
+        <!--        <record id="inherit_stock_move_line_view" model="ir.ui.view">-->
+        <!--             <field name="name">inherit.stock.move.line.view</field>-->
+        <!--            <field name="model">stock.move.line</field>-->
+        <!--            <field name="inherit_id" ref="view_stock_move_line_operation_tree_finished"/>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <xpath expr="//field[@name='lot_id']" position="attributes">-->
+        <!--                    <attributes name="attrs">{}</attributes>-->
+        <!--                </xpath>-->
+        <!--            </field>-->
+        <!--        </record>-->
+    </data>
+</odoo>

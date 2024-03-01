@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="notification_seq_sessions" model="ir.sequence">
+            <field name="name">Notification Sequence</field>
+            <field name="code">notification.master</field>
+            <field name="prefix">NM</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+    <data>
+        <record id="non_moowr_sessions" model="ir.sequence">
+            <field name="name">Non Moowr Sequence</field>
+            <field name="code">non.moowr</field>
+            <field name="prefix">BOE</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

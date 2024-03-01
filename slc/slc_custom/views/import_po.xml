@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="import_file_form_view" model="ir.ui.view">
+        <field name="name">import.file.form.view</field>
+        <field name="model">boe.header</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="upload_purchase_header"/>
+                    </group>
+                    <footer>
+                        <button name="import_payment_header" string="Upload" type="object" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="import_file_action" model="ir.actions.act_window">
+        <field name="name">Import Purchase Order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">boe.header</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="import_file_form_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_import_purchase_order" name="Import BOE" sequence="10" parent="purchase.menu_purchase_root"
+    />
+    <menuitem id="menu_import_purchase_header" name="BOE Header" sequence="10" parent="menu_import_purchase_order"
+              action="slc_custom.import_file_action"/>
+
+    <record id="import_order_line_form_view" model="ir.ui.view">
+        <field name="name">import.order.line.form.view</field>
+        <field name="model">boe.product.line</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="upload_purchase_order_line"/>
+                    </group>
+                    <footer>
+                        <button name="import_payment_order_line" string="Upload" type="object" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="import_order_line_action" model="ir.actions.act_window">
+        <field name="name">Import Order Line</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">boe.product.line</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="import_order_line_form_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_import_purchase_order_line" name="BOE Product line" sequence="11" parent="menu_import_purchase_order"
+              action="slc_custom.import_order_line_action"/>
+
+    <record id="import_invoice_line_form_view" model="ir.ui.view">
+        <field name="name">import.invoice.line.form.view</field>
+        <field name="model">invoice.line</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="upload_invoice_line"/>
+                    </group>
+                    <footer>
+                        <button name="import_invoice_line" string="Upload" type="object" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+    <record id="import_invoice_line_action" model="ir.actions.act_window">
+        <field name="name">Import Invoice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">invoice.line</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="import_invoice_line_form_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_import_invoice_line" name="BOE Invoice Line" sequence="11" parent="menu_import_purchase_order"
+              action="slc_custom.import_invoice_line_action"/>
+
+    <record id="import_boe_shipment_form_view" model="ir.ui.view">
+        <field name="name">import.boe.shipment.form.view</field>
+        <field name="model">boe.shipment.tab</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="upload_boe_shipment"/>
+                    </group>
+                    <footer>
+                        <button name="import_boe_shipment" string="Upload" type="object" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+    <record id="import_boe_shipment_action" model="ir.actions.act_window">
+        <field name="name">Boe Shipment</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">boe.shipment.tab</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="import_boe_shipment_form_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_import_boe_shipment" name="BOE Shipment" sequence="12" parent="menu_import_purchase_order"
+              action="slc_custom.import_boe_shipment_action"/>
+
+    <record id="import_boe_container_form_view" model="ir.ui.view">
+        <field name="name">import.boe.container.form.view</field>
+        <field name="model">boe.container.tab</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="upload_boe_container"/>
+                    </group>
+                    <footer>
+                        <button name="import_boe_container" string="Upload" type="object" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+    <record id="import_boe_container_action" model="ir.actions.act_window">
+        <field name="name">Boe Conatiner</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">boe.container.tab</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="import_boe_container_form_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_import_boe_container" name="BOE Container" sequence="13" parent="menu_import_purchase_order"
+              action="slc_custom.import_boe_container_action"/>
+</odoo>

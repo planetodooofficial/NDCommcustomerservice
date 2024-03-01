@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="customs_station_view_form" model="ir.ui.view">
+        <field name="name">customs.station.view.form</field>
+        <field name="model">customs.station</field>
+        <field name="arch" type="xml">
+            <form string="Customs Station">
+                <sheet>
+                    <group>
+                            <field name="custom_station_name"/>
+                            <field name="commisionerate_station"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="customs_station_view_tree" model="ir.ui.view">
+        <field name="name">customs.station.view.form</field>
+        <field name="model">customs.station</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="custom_station_name"/>
+                <field name="commisionerate_station"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="customs_station_action" model="ir.actions.act_window">
+        <field name="name">Customs Station</field>
+        <field name="res_model">customs.station</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_customs_station_action"
+              name="Customs Station" parent="slc_custom.menu_hsn_root" action="customs_station_action"
+              sequence="6"/>
+</odoo>

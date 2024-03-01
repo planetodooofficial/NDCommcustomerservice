@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_cost_dimension_form" model="ir.ui.view">
+        <field name="name">view.cost.dimension.form</field>
+        <field name="model">cost.dimension</field>
+        <field name="arch" type="xml">
+            <form string="Cost Record">
+                <header>
+                    <button name="button_validate" class="oe_highlight" type="object" string="Validate" attrs="{'invisible': [('state', '=', 'confirm')]}"/>
+                    <field name="state" widget="statusbar"/>
+                    <button name="cancel_button" class="oe_highlight" type="object" string="Cancel" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="be_no"/>
+                            <field name="name" invisible="1"/>
+                            <field name="cb_job_number"/>
+                            <field name="hawb_hbl_no"/>
+                            <field name="hawb_hbl_date"/>
+                            <field name="gross_weight"/>
+                            <field name="container_count"/>
+                            <field name="total_duty"/>
+                            <field name="linked_cb_partner"/>
+                            <field name="business_tags"/>
+                            <field name="be_date"/>
+                            <field name="client_ref_number"/>
+                            <field name="mawb_mbl_no"/>
+                            <field name="mawb_mbl_date"/>
+                            <field name="packages"/>
+                            <field name="assessable_value"/>
+                            <field name="boe_description"/>
+                            <field name="linked_ff_partner"/>
+                            <field name="sales_team"/>
+                            <field name="source_doc"/>
+                            <field name="customs_station"/>
+                            <field name="mode"/>
+                            <field name="linked_tpt_partner"/>
+                            <field name="agency"/>
+                            <field name="handling"/>
+                        </group>
+                        <group>
+                            <field name="documentation"/>
+                            <field name="airport_authority"/>
+                            <field name="airport_demurrage"/>
+                            <field name="cfs_h_t"/>
+                            <field name="cfs_ground_rent"/>
+                            <field name="airline_do"/>
+                            <field name="shipping_line_do"/>
+                            <field name="others_cb"/>
+                            <field name="cb_gst"/>
+                            <field name="cb_invoice_total"/>
+                            <field name="total_cb_ff_tpt"/>
+                            <field name="air_freight"/>
+                            <field name="sea_freight"/>
+                            <field name="ex_works"/>
+                            <field name="others_ff"/>
+                            <field name="ff_gst"/>
+                            <field name="ff_invoice_total"/>
+                            <field name="transportation"/>
+                            <field name="transport_detention"/>
+                            <field name="others_tpt"/>
+                            <field name="tpt_gst"/>
+                            <field name="tpt_invoice_total"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Customs Broker">
+                            <field name="custom_broker_ids">
+                                <tree editable="bottom">
+                                    <field name="invoice_number"/>
+                                    <field name="agency"/>
+                                    <field name="handling"/>
+                                    <field name="documentation"/>
+                                    <field name="airport_authority"/>
+                                    <field name="airport_demurrage"/>
+                                    <field name="cfs_h_t"/>
+                                    <field name="cfs_ground_rent"/>
+                                    <field name="airline_do"/>
+                                    <field name="shipping_line_do"/>
+                                    <field name="others_cb"/>
+                                    <field name="cb_total"/>
+                                    <field name="cb_gst"/>
+                                    <field name="cb_invoice_total"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Freight Forwarder">
+                            <field name="freight_forwarder_ids">
+                                <tree editable="bottom">
+                                    <field name="invoice_number"/>
+                                    <field name="sea_freight"/>
+                                    <field name="ex_works"/>
+                                    <field name="others_ff"/>
+                                    <field name="ff_total"/>
+                                    <field name="ff_gst"/>
+                                    <field name="ff_invoice_total"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Transporter">
+                            <field name="transporter_ids">
+                                <tree editable="bottom">
+                                    <field name="invoice_number"/>
+                                    <field name="transportation"/>
+                                    <field name="transport_detention"/>
+                                    <field name="others_tpt"/>
+                                    <field name="tpt_total"/>
+                                    <field name="tpt_gst"/>
+                                    <field name="tpt_invoice_total"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cost_dimension_tree" model="ir.ui.view">
+        <field name="name">view.cost.dimension.tree</field>
+        <field name="model">cost.dimension</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="be_no"/>
+                <field name="be_date"/>
+                <field name="mode"/>
+                <field name="hawb_hbl_no"/>
+                <field name="mawb_mbl_no"/>
+                <field name="customs_station"/>
+                <field name="gross_weight"/>
+                <field name="packages"/>
+                <field name="assessable_value"/>
+                <field name="state"/>
+                <field name="cb_job_number" optional="hide"/>
+                <field name="client_ref_number" optional="hide"/>
+                <field name="hawb_hbl_date" optional="hide"/>
+                <field name="mawb_mbl_date" optional="hide"/>
+                <field name="container_count" optional="hide"/>
+                <field name="linked_cb_partner" optional="hide"/>
+                <field name="linked_ff_partner" optional="hide"/>
+                <field name="linked_tpt_partner" optional="hide"/>
+                <field name="sales_team" optional="hide"/>
+                <field name="total_duty" optional="hide"/>
+                <field name="agency" optional="hide"/>
+                <field name="handling" optional="hide"/>
+                <field name="documentation" optional="hide"/>
+                <field name="airport_authority" optional="hide"/>
+                <field name="airport_demurrage" optional="hide"/>
+                <field name="cfs_h_t" optional="hide"/>
+                <field name="cfs_ground_rent" optional="hide"/>
+                <field name="airline_do" optional="hide"/>
+                <field name="shipping_line_do" optional="hide"/>
+                <field name="others_cb" optional="hide"/>
+                <field name="cb_gst" optional="hide"/>
+                <field name="cb_invoice_total" optional="hide"/>
+                <field name="air_freight" optional="hide"/>
+                <field name="sea_freight" optional="hide"/>
+                <field name="ex_works" optional="hide"/>
+                <field name="others_ff" optional="hide"/>
+                <field name="ff_invoice_total" optional="hide"/>
+                <field name="transportation" optional="hide"/>
+                <field name="transport_detention" optional="hide"/>
+                <field name="others_tpt" optional="hide"/>
+                <field name="tpt_gst" optional="hide"/>
+                <field name="tpt_invoice_total" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="cost_dimension_action" model="ir.actions.act_window">
+        <field name="name">Cost</field>
+        <field name="res_model">cost.dimension</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+               eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('slc_custom.view_cost_dimension_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('slc_custom.view_cost_dimension_form')})]"/>
+    </record>
+</odoo>

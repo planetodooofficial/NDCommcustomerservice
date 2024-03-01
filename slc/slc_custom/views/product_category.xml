@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="product_category_form_inherit" model="ir.ui.view">
+            <field name="name">product.category.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position='after'>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </xpath>
+                <xpath expr="//form/sheet" position="inside">
+                    <group>
+                        <field name="category_name"/>
+                        <field name="category_description"/>
+                        <field name="indian_hsn"/>
+                        <field name="digit_heading_4"/>
+                        <field name="digit_heading_6"/>
+                        <field name="digit_heading_8"/>
+                        <field name="remarks"/>
+                        <field name="so_number" invisible="1" force_save="1"/>
+                        <field name="social_so_number" invisible="1" force_save="1"/>
+                        <field name="health_so_number" invisible="1" force_save="1"/>
+                        <field name="aidc_so_number" invisible="1" force_save="1"/>
+                        <field name="excise_so_number" invisible="1" force_save="1"/>
+                        <field name="road_so_number" invisible="1" force_save="1"/>
+                        <field name="compensation_so_number" invisible="1" force_save="1"/>
+                        <field name="igst_so_number" invisible="1" force_save="1"/>
+                    </group>
+                    <notebook>
+                        <page name="notification" string="Notification">
+                            <table style="width:100%">
+                                <tr>
+                                    <th style="width:16%"></th>
+                                    <th style="width:7%">Number</th>
+                                    <th style="width:7%">Serial No</th>
+                                    <th style="width:20%">Notification Remark</th>
+                                    <th style="width:20%">Serial No Remark</th>
+                                    <th style="width:20%">Tags</th>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">Basic Customs Duty</td>
+                                    <td style="width:7%">
+                                        <field name="basic_customs_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="basic_customs_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="basic_customs_remark" nolabel="1"
+                                               placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="basic_customs_sr_remark" nolabel="1"
+                                               placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="basic_customs_no_tags" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}" nolabel="1"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">Social Welfare Surchage</td>
+                                    <td style="width:7%">
+                                        <field name="social_welfare_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="social_welfare_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', social_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="social_welfare_remark" nolabel="1"
+                                               placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="social_welfare_sr_remark" nolabel="1"
+                                               placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="social_welfare_no_tags" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}" nolabel="1"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">Health Cess</td>
+                                    <td style="width:7%">
+                                        <field name="health_cess_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="health_cess_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', health_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="health_cess_remark" nolabel="1" placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="health_cess_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="health_cess_no_tags" nolabel="1" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width:16%">AIDC</td>
+                                    <td style="width:7%">
+                                        <field name="aidc_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="aidc_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', aidc_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="aidc_remark" nolabel="1" placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="aidc_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="aidc_no_tags" nolabel="1" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">Excise</td>
+                                    <td style="width:7%">
+                                        <field name="excise_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="excise_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', excise_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="excise_remark" nolabel="1" placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="excise_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="excise_no_tags" nolabel="1" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">Road &amp; Infra Cess</td>
+                                    <td style="width:7%">
+                                        <field name="road_infra_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="road_infra_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', road_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="road_infra_remark" nolabel="1" placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="road_infra_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="road_infra_no_tags" nolabel="1" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">IGST</td>
+                                    <td style="width:7%">
+                                        <field name="igst_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="igst_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', igst_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="igst_remark" nolabel="1" placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="igst_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="igst_no_tags" nolabel="1" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:16%">Compensation Cess</td>
+                                    <td style="width:7%">
+                                        <field name="compensation_no" nolabel="1" placeholder="Number"
+                                               domain="[('notification_stage', '=', 'confirm')]" context="{'hide_code':True}"/>
+                                    </td>
+                                    <td style="width:7%">
+                                        <field name="compensation_sr_no" nolabel="1" placeholder="Serial Number"
+                                               domain="[('notification_serial_stage', '=', 'confirm'), ('notification_serial_number', '=', compensation_so_number)]"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="compensation_remark" nolabel="1"
+                                               placeholder="Notification Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="compensation_sr_remark" nolabel="1"
+                                               placeholder="Serial No Remark"/>
+                                    </td>
+                                    <td style="width:20%">
+                                        <field name="compensation_no_tags" widget="many2many_tags"
+                                               options="{'color_field': 'color', 'no_create_edit': True}" nolabel="1"
+                                               placeholder="Tags"/>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </page>
+                        <page name="ntb" string="NTB">
+                            <table style="width:70%">
+                                <tr>
+                                    <td>BIS</td>
+                                    <td>
+                                        <field name="bis"/>
+                                    </td>
+                                    <td>
+                                        <field name="bis_remark" nolabel="1" placeholder="Remark for BIS"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>WPC</td>
+                                    <td>
+                                        <field name="wpc"/>
+                                    </td>
+                                    <td>
+                                        <field name="wpc_remark" nolabel="1" placeholder="Remark for WPC"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>AERB</td>
+                                    <td>
+                                        <field name="aerb"/>
+                                    </td>
+                                    <td>
+                                        <field name="aerb_remark" nolabel="1" placeholder="Remark for AERB"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>FSSAI</td>
+                                    <td>
+                                        <field name="fssai"/>
+                                    </td>
+                                    <td>
+                                        <field name="fssai_remark" nolabel="1" placeholder="Remark for FSSAI"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CDSCO</td>
+                                    <td>
+                                        <field name="cdsco"/>
+                                    </td>
+                                    <td>
+                                        <field name="cdsco_remark" nolabel="1" placeholder="Remark for CDSCO"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PQ</td>
+                                    <td>
+                                        <field name="pq"/>
+                                    </td>
+                                    <td>
+                                        <field name="pq_remark" nolabel="1" placeholder="Remark for PQ"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>APEDA</td>
+                                    <td>
+                                        <field name="apeda"/>
+                                    </td>
+                                    <td>
+                                        <field name="apeda_remark" nolabel="1" placeholder="Remark for APEDA"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Medical Device</td>
+                                    <td>
+                                        <field name="medical_device"/>
+                                    </td>
+                                    <td>
+                                        <field name="medical_device_remark" nolabel="1"
+                                               placeholder="Remark for Medical Device"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PIMS applicable</td>
+                                    <td>
+                                        <field name="pims_applicable"/>
+                                    </td>
+                                    <td>
+                                        <field name="pims_applicable_remark" nolabel="1"
+                                               placeholder="Remark for PIMS applicable"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CHIMS applicable</td>
+                                    <td>
+                                        <field name="chims_applicable"/>
+                                    </td>
+                                    <td>
+                                        <field name="chims_applicable_remark" nolabel="1"
+                                               placeholder="Remark for CHIMS applicable"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SIMS applicable</td>
+                                    <td>
+                                        <field name="sims_applicable"/>
+                                    </td>
+                                    <td>
+                                        <field name="sims_applicable_remark" nolabel="1"
+                                               placeholder="Remark for SIMS applicable"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </page>
+                        <page name="ccr_icegate" string="CCR">
+                            <group>
+                                <field name="ccr_remark"/>
+                                <field name="ccr_date"/>
+                                <field name="ccr_link"/>
+                            </group>
+                        </page>
+                        <page name="attachment" string="Attachments">
+                            <group>
+                                <field name="product_images"/>
+                                <field name="catalog"/>
+                                <field name="other"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_product_category_form_inherit" model="ir.ui.view">
+            <field name="name">stock.product.category.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock.product_category_form_view_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <!--        <record id="stock_account_product_category_form_inherit" model="ir.ui.view">-->
+        <!--            <field name="name">stock.account.product.category.form.inherit</field>-->
+        <!--            <field name="model">product.category</field>-->
+        <!--            <field name="inherit_id" ref="stock_account.view_category_property_form_stock"/>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <xpath expr="//group/[@name='Inventory Valuation']" position="attributes">-->
+        <!--                    <attribute name="invisible">1</attribute>-->
+        <!--                </xpath>-->
+        <!--            </field>-->
+        <!--        </record>-->
+
+    </data>
+</odoo>

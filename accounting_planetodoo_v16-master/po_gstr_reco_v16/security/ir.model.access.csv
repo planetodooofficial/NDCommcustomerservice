@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_upload_gstr_reco,upload_gstr_reco,model_upload_gstr_reco,account.group_account_manager,1,1,1,1
-access_gstr_reconciliation,gstr.reconciliation,model_gstr_reconciliation,account.group_account_manager,1,1,1,1
-access_gstr_reconciliation,gstr_reconciliation,model_gstr_reconciliation,account.group_account_manager,1,1,1,1
-access_reconciled_move_line,reconciled_move_line,model_reconciled_move_line,account.group_account_manager,1,1,1,1
-access_odoo_missing_move_line,odoo_missing_move_line,model_odoo_missing_move_line,account.group_account_manager,1,1,1,1
-access_file_missing_move_line,file_missing_move_line,model_file_missing_move_line,account.group_account_manager,1,1,1,1

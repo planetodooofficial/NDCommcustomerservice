@@ -1,0 +1,20 @@
+<odoo>
+    <record id="view_stock_picking_type_form" model="ir.ui.view">
+        <field name="name">view.stock.picking.type.form</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group[2]/group[3]" position="after">
+                <group string="Additional Information" name="Additional Information">
+                    <field name="vehicle_otl_details"/>
+                    <field name="delivery_challan_details"/>
+                    <field name="sale_invoice_details"/>
+                    <field name="export_details"/>
+                </group>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='show_operations']" position="after">
+                <field name="finished_goods"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

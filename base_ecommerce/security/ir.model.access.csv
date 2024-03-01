@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-shop.instance,shop.instance,base_ecommerce.model_shop_instance,base.group_user,1,1,1,1
-shop.sales.channel,shop.sales.channel,base_ecommerce.model_shop_sales_channel,base.group_user,1,1,1,1
-shop.import.logs,shop.import.logs,base_ecommerce.model_shop_import_logs,base.group_user,1,1,1,1
-seller.merchant,seller.merchant,base_ecommerce.model_seller_merchant,base.group_user,1,1,1,1

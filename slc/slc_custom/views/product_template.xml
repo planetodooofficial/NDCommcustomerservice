@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="product_template_form_inherit" model="ir.ui.view">
+            <field name="name">product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div[@name='options']" position="after">
+                    <group>
+                        <group>
+                            <field name="material_code"/>
+                            <field name="model_number"/>
+                            <field name="remarks"/>
+                            <field name="is_fg"/>
+                            <field name="is_resultant_goods"/>
+                        </group>
+                        <group>
+                            <field name="product_category_name"/>
+                            <field name="customer_tags" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create_edit': True}"
+                                   placeholder="Tags"/>
+                            <field name="product_category_description"/>
+                            <field name="categ_id"/>
+                        </group>
+                    </group>
+                </xpath>
+                <!--                <xpath expr="//form/sheet/notebook/page[@name='sales']" position="attributes">-->
+                <!--                    <attribute name="invisible">1</attribute>-->
+                <!--                </xpath>-->
+                <!--                <xpath expr="//form/sheet/notebook/page[@name='purchase']" position="attributes">-->
+                <!--                    <attribute name="invisible">1</attribute>-->
+                <!--                </xpath>-->
+                <!--                <xpath expr="//form/sheet/notebook/page[@name='inventory']" position="attributes">-->
+                <!--                    <attribute name="invisible">1</attribute>-->
+                <!--                </xpath>-->
+                <!--                <xpath expr="//form/sheet/notebook/page[@name='invoicing']" position="attributes">-->
+                <!--                    <attribute name="invisible">1</attribute>-->
+                <!--                </xpath>-->
+
+                <xpath expr="//form/sheet/notebook/page[@name='inventory']"
+                       position="after">
+                    <page name="notification" string="Notification">
+                        <table style="width:100%">
+                            <tr>
+                                <th style="width:16%"></th>
+                                <th style="width:7%">Number</th>
+                                <th style="width:7%">Serial No</th>
+                                <th style="width:30%">Notification Remark</th>
+                                <th style="width:30%">Serial No Remark</th>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">Basic Customs Duty</td>
+                                <td style="width:7%">
+                                    <field name="basic_customs_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="basic_customs_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="basic_customs_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="basic_customs_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">Social Welfare Surchage</td>
+                                <td style="width:7%">
+                                    <field name="social_welfare_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="social_welfare_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="social_welfare_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="social_welfare_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">Health Cess</td>
+                                <td style="width:7%">
+                                    <field name="health_cess_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="health_cess_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="health_cess_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="health_cess_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="width:16%">AIDC</td>
+                                <td style="width:7%">
+                                    <field name="aidc_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="aidc_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="aidc_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="aidc_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">Excise</td>
+                                <td style="width:7%">
+                                    <field name="excise_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="excise_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="excise_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="excise_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">Road &amp; Infra Cess</td>
+                                <td style="width:7%">
+                                    <field name="road_infra_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="road_infra_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="road_infra_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="road_infra_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">IGST</td>
+                                <td style="width:7%">
+                                    <field name="igst_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="igst_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="igst_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="igst_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:16%">Compensation Cess</td>
+                                <td style="width:7%">
+                                    <field name="compensation_no" nolabel="1" placeholder="Number"/>
+                                </td>
+                                <td style="width:7%">
+                                    <field name="compensation_sr_no" nolabel="1" placeholder="Serial Number"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="compensation_remark" nolabel="1" placeholder="Notification Remark"/>
+                                </td>
+                                <td style="width:30%">
+                                    <field name="compensation_sr_remark" nolabel="1" placeholder="Serial No Remark"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </page>
+                    <page name="non_tariff_barriers" string="Non tariff">
+                        <table style="width:70%">
+                            <tr>
+                                <td>BIS</td>
+                                <td>
+                                    <field name="bis"/>
+                                </td>
+                                <td>
+                                    <field name="bis_remark" nolabel="1" placeholder="Remark for BIS"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>WPC</td>
+                                <td>
+                                    <field name="wpc"/>
+                                </td>
+                                <td>
+                                    <field name="wpc_remark" nolabel="1" placeholder="Remark for WPC"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AERB</td>
+                                <td>
+                                    <field name="aerb"/>
+                                </td>
+                                <td>
+                                    <field name="aerb_remark" nolabel="1" placeholder="Remark for AERB"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>FSSAI</td>
+                                <td>
+                                    <field name="fssai"/>
+                                </td>
+                                <td>
+                                    <field name="fssai_remark" nolabel="1" placeholder="Remark for FSSAI"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CDSCO</td>
+                                <td>
+                                    <field name="cdsco"/>
+                                </td>
+                                <td>
+                                    <field name="cdsco_remark" nolabel="1" placeholder="Remark for CDSCO"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PQ</td>
+                                <td>
+                                    <field name="pq"/>
+                                </td>
+                                <td>
+                                    <field name="pq_remark" nolabel="1" placeholder="Remark for PQ"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>APEDA</td>
+                                <td>
+                                    <field name="apeda"/>
+                                </td>
+                                <td>
+                                    <field name="apeda_remark" nolabel="1" placeholder="Remark for APEDA"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Medical Device</td>
+                                <td>
+                                    <field name="medical_device"/>
+                                </td>
+                                <td>
+                                    <field name="medical_device_remark" nolabel="1" placeholder="Remark for Medical Device"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CHIMS applicable</td>
+                                <td>
+                                    <field name="chims_applicable"/>
+                                </td>
+                                <td>
+                                    <field name="chims_applicable_remark" nolabel="1" placeholder="Remark for CHIMS applicable"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>SIMS applicable</td>
+                                <td>
+                                    <field name="sims_applicable"/>
+                                </td>
+                                <td>
+                                    <field name="sims_applicable_remark" nolabel="1" placeholder="Remark for SIMS applicable"/>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>PIMS applicable</td>
+                                <td>
+                                    <field name="pims_applicable"/>
+                                </td>
+                                <td>
+                                    <field name="pims_applicable_remark" nolabel="1" placeholder="Remark for PIMS applicable"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </page>
+                    <page name="ccr_icegate" string="CCR">
+                        <group>
+                            <field name="ccr_remark"/>
+                            <field name="ccr_date"/>
+                            <field name="ccr_link"/>
+                        </group>
+                    </page>
+                    <page name="attachment" string="Attachments">
+                        <group>
+                            <field name="product_images"/>
+                            <field name="catalog"/>
+                            <field name="other"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_form_inherit_view_new" model="ir.ui.view">
+            <field name="name">product.template.form.inherit_new</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='general_information']/group/group[2]/div[2]/field[@name='standard_price']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

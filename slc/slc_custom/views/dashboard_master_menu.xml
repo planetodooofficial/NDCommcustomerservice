@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--    <menuitem id="menu_master_dashboard"-->
+    <!--              name="Masters" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"-->
+    <!--              action="non_moowr_action" invisible="1"-->
+    <!--              sequence="160"/>-->
+    <!--    <menuitem id="menu_hsn_master_dashboard"-->
+    <!--              name="HSN Master" parent="menu_master_dashboard"-->
+    <!--              action="hsn_master_action"-->
+    <!--              sequence="1"/>-->
+    <!--    <menuitem id="menu_notification_master_dashboard"-->
+    <!--              name="Notification Master" parent="menu_master_dashboard"-->
+    <!--              action="notification_master_action"-->
+    <!--              sequence="2"/>-->
+    <!--    <menuitem id="new_menu_notification_tag_master_dashboard"-->
+    <!--              name="Notification Tag Master" parent="slc_custom.menu_master_dashboard"-->
+    <!--              action="notification_tag_master_action"-->
+    <!--              sequence="3"/>-->
+    <!--    <menuitem id="menu_notification_serial_master_dashboard"-->
+    <!--              name="Notification Serial Master" parent="menu_master_dashboard"-->
+    <!--              action="notification_serial_master_action"-->
+    <!--              sequence="4"/>-->
+    <!--    <menuitem id="menu_bond_master_dashboard"-->
+    <!--              name="Bond Master" parent="menu_master_dashboard"-->
+    <!--              action="bond_master_action"-->
+    <!--              sequence="5"/>-->
+    <!--    <menuitem id="menu_commisionerate_master_dashboard"-->
+    <!--              name="Commisionerate Master" parent="menu_master_dashboard"-->
+    <!--              action="commisionerate_master_action"-->
+    <!--              sequence="6"/>-->
+    <!--    <menuitem id="menu_custom_station_dashboard"-->
+    <!--              name="Custom Station" parent="menu_master_dashboard"-->
+    <!--              action="customs_station_action"-->
+    <!--              sequence="7"/>-->
+    <!--    <menuitem id="menu_exim_transaction_sub_category_dashboard"-->
+    <!--              name="EXIM Transaction Sub Category" parent="menu_master_dashboard"-->
+    <!--              action="exim_sub_category_action"-->
+    <!--              sequence="8"/>-->
+    <record id="purchase.menu_purchase_rfq" model="ir.ui.menu">
+        <field name="name">EXIM I Draft</field>
+    </record>
+    <record id="purchase.menu_purchase_form_action" model="ir.ui.menu">
+        <field name="name">EXIM I</field>
+    </record>
+    <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+        <field name="name">EXIM I</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('purchase.purchase_order_view_tree')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('purchase.purchase_order_view_kanban_without_dashboard')}),
+            ]"/>
+        <field name="domain">[('state','in',('purchase', 'done'))]</field>
+        <field name="search_view_id" ref="purchase.purchase_order_view_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No purchase order found. Let's create one!
+            </p>
+            <p>
+                Once you ordered your products to your supplier, confirm your request for quotation and it will turn
+                into a purchase order.
+            </p>
+        </field>
+    </record>
+
+    <!--   Hided Dashboards deafult menu  -->
+    <record model="ir.ui.menu" id="spreadsheet_dashboard.spreadsheet_dashboard_menu_dashboard">
+        <field name="active" eval="False"/>
+    </record>
+    <record model="ir.ui.menu" id="spreadsheet_dashboard.spreadsheet_dashboard_menu_configuration">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!--  Added Imports Main Menu  -->
+    <menuitem id="main_menu_imports"
+              name="Imports" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              action="spreadsheet_dashboard.ir_actions_dashboard_action"
+              sequence="12"/>
+
+    <!--  Added Submenu 1 in Import main menu  -->
+    <menuitem id="sub_menu_imports_boe"
+              name="Bills of Entry" parent="main_menu_imports"
+              action="non_moowr_action"
+              sequence="12"/>
+
+    <!--  Added submenus 2 to Import main menu  -->
+    <menuitem id="sub_menu_imports_upload_boe"
+              name="Upload BOE" parent="main_menu_imports"
+              sequence="12"/>
+    <menuitem id="sub_menu_imports_upload_boe_header"
+              name="Header" parent="sub_menu_imports_upload_boe"
+              action="import_file_action"
+              sequence="12"/>
+    <menuitem id="sub_menu_imports_upload_boe_shipment"
+              name="Shipment" parent="sub_menu_imports_upload_boe"
+              action="import_boe_shipment_action"
+              sequence="13"/>
+    <menuitem id="sub_menu_imports_upload_boe_invoices"
+              name="Invoices" parent="sub_menu_imports_upload_boe"
+              action="import_invoice_line_action"
+              sequence="14"/>
+    <menuitem id="sub_menu_imports_upload_boe_items"
+              name="Items" parent="sub_menu_imports_upload_boe"
+              action="import_order_line_action"
+              sequence="15"/>
+    <menuitem id="sub_menu_imports_upload_boe_container"
+              name="Container" parent="sub_menu_imports_upload_boe"
+              action="import_boe_container_action"
+              sequence="16"/>
+
+    <!--  Added submenu 1 to import main menu  -->
+    <menuitem id="sub_menu_imports_performance"
+              name="Performance" parent="main_menu_imports"
+              sequence="13"/>
+
+    <!--  Added submenus 2 to import main menu  -->
+    <menuitem id="sub_menu_imports_performance_perf_records"
+              name="Perf records" parent="sub_menu_imports_performance"
+              action="import_boe_container_action"
+              sequence="1"/>
+    <menuitem id="sub_menu_imports_performance_report"
+              name="Report" parent="sub_menu_imports_performance"
+              action="import_boe_container_action"
+              sequence="2"/>
+
+    <!--  Added submenu 1 to import main menu  -->
+    <menuitem id="sub_menu_imports_costs"
+              name="Costs" parent="main_menu_imports"
+              sequence="15"/>
+
+    <!--  Added submenus 2 to import main menu  -->
+    <menuitem id="sub_menu_imports_costs_cost_records"
+              name="Costs records" parent="sub_menu_imports_costs"
+              action="slc_custom.cost_dimension_action"
+              sequence="1"/>
+    <menuitem id="sub_menu_imports_costs_cost_reports"
+              name="Reports" parent="sub_menu_imports_costs"
+              action="slc_custom.cost_dimension_action"
+              sequence="2"/>
+
+    <!--  Added Export main menu  -->
+    <menuitem id="main_menu_exports"
+              name="Exports" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              action="spreadsheet_dashboard.ir_actions_dashboard_action"
+              sequence="13"/>
+
+    <!--  Added submenu 1 to Export main menu  -->
+    <menuitem id="main_menu_exports_shipping_bill"
+              name="Shipping Bill" parent="main_menu_exports"
+              action="spreadsheet_dashboard.ir_actions_dashboard_action"
+              sequence="1"/>
+
+    <!--  Added MOOWR main menu  -->
+    <menuitem id="main_menu_moowr"
+              name="MOOWR" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              sequence="16"/>
+
+    <!--  Added submenu 1 to Export main menu  -->
+    <menuitem id="main_menu_moowr_boe"
+              name="Bills of entry" parent="main_menu_moowr"
+              action="non_moowr_action"
+              sequence="1"/>
+    <menuitem id="main_menu_moowr_moowr_in"
+              name="MOOWR In" parent="main_menu_moowr"
+              action="non_moowr_action"
+              sequence="2"/>
+    <menuitem id="main_menu_moowr_moowr_out"
+              name="MOOWR Out" parent="main_menu_moowr"
+              action="non_moowr_action"
+              sequence="3"/>
+    <menuitem id="main_menu_moowr_bond_master"
+              name="Bond Master" parent="main_menu_moowr"
+              action="bond_master_action"
+              sequence="4"/>
+    <menuitem id="main_menu_moowr_reports"
+              name="Reports" parent="main_menu_moowr"
+              action="bond_master_action"
+              sequence="5"/>
+
+    <!--  Added submenu 2 to report sub menu  -->
+    <menuitem id="main_menu_moowr_reports_annexure"
+              name="Annexure B" parent="main_menu_moowr_reports"
+              action="bond_master_action"
+              sequence="1"/>
+
+    <!--  Added submenu 1 to Export main menu  -->
+    <menuitem id="main_menu_moowr_import_boe"
+              name="Import BOE" parent="main_menu_moowr"
+              sequence="6"/>
+
+    <!--  Added submenu 2 to Import BOE sub menu  -->
+    <menuitem id="main_menu_moowr_import_boe_header"
+              name="Header" parent="main_menu_moowr_import_boe"
+              action="import_file_action"
+              sequence="1"/>
+    <menuitem id="main_menu_moowr_import_boe_shipment"
+              name="Shipment" parent="main_menu_moowr_import_boe"
+              action="import_boe_shipment_action"
+              sequence="2"/>
+    <menuitem id="main_menu_moowr_import_boe_invoices"
+              name="Invoices" parent="main_menu_moowr_import_boe"
+              action="import_invoice_line_action"
+              sequence="3"/>
+    <menuitem id="main_menu_moowr_import_boe_items"
+              name="Items" parent="main_menu_moowr_import_boe"
+              action="import_order_line_action"
+              sequence="4"/>
+    <menuitem id="main_menu_moowr_import_boe_container"
+              name="Container" parent="main_menu_moowr_import_boe"
+              action="import_boe_container_action"
+              sequence="5"/>
+
+    <!--  Added New Exports main menu  -->
+    <menuitem id="main_menu_new_exports"
+              name="Exports" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              sequence="17"/>
+
+    <!--  Added submenu 1 to New Export main menu  -->
+    <menuitem id="main_menu_new_exports_shipping_bill"
+              name="Shipping Bill" parent="main_menu_new_exports"
+              action="spreadsheet_dashboard.ir_actions_dashboard_action"
+              sequence="1"/>
+
+    <!--  Added Inventory main menu  -->
+    <menuitem id="main_menu_inventory"
+              name="Inventory" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              sequence="18"/>
+
+    <!--  Added submenu 1 to Inventory main menu  -->
+    <menuitem id="main_menu_inventory_overview"
+              name="Overview" parent="main_menu_inventory"
+              action="stock.stock_picking_type_action"
+              sequence="1"/>
+    <menuitem id="main_menu_inventory_operations"
+              name="Operations" parent="main_menu_inventory"
+              sequence="1"/>
+
+    <!-- Added Submenu 2 to operation -->
+    <menuitem id="main_menu_inventory_operations_replenishment"
+              name="Replenishment" parent="main_menu_inventory_operations"
+              action="stock.action_orderpoint"
+              sequence="1"/>
+    <menuitem id="main_menu_inventory_operations_inventory_adjustments"
+              name="Inventory Adjustments" parent="main_menu_inventory_operations"
+              action="stock.action_view_inventory_tree"
+              sequence="2"/>
+    <menuitem id="main_menu_inventory_operations_transfers"
+              name="transfers" parent="main_menu_inventory_operations"
+              action="stock.action_picking_tree_all"
+              sequence="3"/>
+    <menuitem id="main_menu_inventory_operations_scraps"
+              name="Scraps" parent="main_menu_inventory_operations"
+              action="stock.action_stock_scrap"
+              sequence="4"/>
+    <menuitem id="main_menu_inventory_operations_run_schedular"
+              name="Run Schedular" parent="main_menu_inventory_operations"
+              action="stock.action_procurement_compute"
+              sequence="5"/>
+
+    <!--  Added submenu 1 Products 1 to Inventory main menu  -->
+    <menuitem id="main_menu_inventory_products"
+              name="Products" parent="main_menu_inventory"
+              sequence="2"/>
+
+    <!--  Added submenu 2 Products to products sub menu  -->
+    <menuitem id="main_menu_inventory_products_products"
+              name="Products" parent="main_menu_inventory_products"
+              action="stock.product_template_action_product"
+              sequence="1"/>
+    <menuitem id="main_menu_inventory_products_lot_serial_number"
+              name="Lot/Serial Numbers" parent="main_menu_inventory_products"
+              action="stock.action_production_lot_form"
+              sequence="2"/>
+
+    <!-- Added submenu 1 reporting to Inventory main menu  -->
+    <menuitem id="main_menu_inventory_reporting"
+              name="Reporting" parent="main_menu_inventory"
+              sequence="3"/>
+
+    <!-- Added submenu 2 to reporting sub menu  -->
+    <menuitem id="main_menu_inventory_reporting_stock"
+              name="Stock" parent="main_menu_inventory_reporting"
+              action="stock.action_product_stock_view"
+              sequence="1"/>
+    <menuitem id="main_menu_inventory_reporting_location"
+              name="Location" parent="main_menu_inventory_reporting"
+              action="stock.action_view_quants"
+              sequence="2"/>
+    <menuitem id="main_menu_inventory_reporting_moves_history"
+              name="Moves History" parent="main_menu_inventory_reporting"
+              action="stock.stock_move_line_action"
+              sequence="3"/>
+    <menuitem id="main_menu_inventory_reporting_stock_moves"
+              name="Stock Moves" parent="main_menu_inventory_reporting"
+              action="stock.stock_move_action"
+              sequence="4"/>
+    <menuitem id="main_menu_inventory_reporting_valuation"
+              name="Valuation" parent="main_menu_inventory_reporting"
+              action="stock_account.stock_valuation_layer_action"
+              sequence="5"/>
+
+    <!-- Added submenu 1 configuration to Inventory main menu  -->
+    <menuitem id="main_menu_inventory_configuration"
+              name="Configuration" parent="main_menu_inventory"
+              sequence="4"/>
+
+    <!--Added submenu 2 to configuration sub menu-->
+    <menuitem id="main_menu_inventory_configuration_settings"
+              name="Settings" parent="main_menu_inventory_configuration"
+              action="stock.action_stock_config_settings"
+              sequence="1"/>
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              name="Warehouse Management" parent="main_menu_inventory_configuration"-->
+    <!--              sequence="2"/>-->
+
+    <!--    &lt;!&ndash;Added submenu 3 to Warehouse Management sub menu 2&ndash;&gt;-->
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_management_warehouses"-->
+    <!--              name="Warehouse" parent="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              action="stock.action_warehouse_form"-->
+    <!--              sequence="1"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_management_locations"-->
+    <!--              name="Location" parent="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              action="stock.action_location_form"-->
+    <!--              sequence="2"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_management_routes"-->
+    <!--              name="Routes" parent="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              action="stock.action_routes_form"-->
+    <!--              sequence="2"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_management_rules"-->
+    <!--              name="Rules" parent="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              action="stock.action_rules_form"-->
+    <!--              sequence="3"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_operation_types"-->
+    <!--              name="Operation Types" parent="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              action="stock.action_picking_type_list"-->
+    <!--              sequence="4"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_warehouse_putaway_rules"-->
+    <!--              name="Putaway Rules" parent="main_menu_inventory_configuration_warehouse_management"-->
+    <!--              action="stock.action_putaway_tree"-->
+    <!--              sequence="5"/>-->
+
+    <!--    &lt;!&ndash;Added submenu 2 product to configuration sub menu 1&ndash;&gt;-->
+    <!--    <menuitem id="main_menu_inventory_configuration_products"-->
+    <!--              name="Products" parent="main_menu_inventory_configuration"-->
+    <!--              sequence="3"/>-->
+
+    <!--    &lt;!&ndash;Added submenu 3 to Product sub menu 2&ndash;&gt;-->
+    <!--    <menuitem id="main_menu_inventory_configuration_products_product_categories"-->
+    <!--              name="Products categories" parent="main_menu_inventory_configuration_products"-->
+    <!--              action="product.product_category_action_form"-->
+    <!--              sequence="1"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_products_reordering_rules"-->
+    <!--              name="Reordering Rules" parent="main_menu_inventory_configuration_products"-->
+    <!--              action="stock.action_orderpoint"-->
+    <!--              sequence="2"/>-->
+    <!--    <menuitem id="main_menu_inventory_configuration_products_barcode_nomenclature"-->
+    <!--              name="Barcode Nomenclature" parent="main_menu_inventory_configuration_products"-->
+    <!--              action="barcodes.action_barcode_nomenclature_form"-->
+    <!--              sequence="3"/>-->
+
+    <!--  Added X - Configuration main menu  -->
+    <menuitem id="main_menu_x_configurations"
+              name="X-Configurations" parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              sequence="19"/>
+
+    <!--  Added submenu 1 to X - Configuration main menu  -->
+    <menuitem id="main_menu_x_configurations_hsns"
+              name="HSNs" parent="main_menu_x_configurations"
+              action="hsn_master_action"
+              sequence="1"/>
+    <menuitem id="main_menu_x_configurations_notifications"
+              name="Notifications" parent="main_menu_x_configurations"
+              action="notification_master_action"
+              sequence="2"/>
+    <menuitem id="main_menu_x_configurations_notification_serials"
+              name="Notification Serials" parent="main_menu_x_configurations"
+              action="notification_serial_master_action"
+              sequence="3"/>
+    <menuitem id="main_menu_x_configurations_commissionerate"
+              name="Commissionerate" parent="main_menu_x_configurations"
+              action="commisionerate_master_action"
+              sequence="4"/>
+    <menuitem id="main_menu_x_configurations_custom_stations"
+              name="Custom Stations" parent="main_menu_x_configurations"
+              action="customs_station_action"
+              sequence="5"/>
+    <menuitem id="main_menu_x_configurations_product_categories"
+              name="Product Categories" parent="main_menu_x_configurations"
+              action="product.product_category_action_form"
+              sequence="5"/>
+    <menuitem id="main_menu_x_configurations_products"
+              name="Products" parent="main_menu_x_configurations"
+              action="stock.product_template_action_product"
+              sequence="6"/>
+    <menuitem id="main_menu_x_configurations_notification_tags"
+              name="Notification Tags" parent="main_menu_x_configurations"
+              action="notification_tag_master_action"
+              sequence="7"/>
+    <menuitem id="main_menu_x_configurations_bond_master"
+              name="Bond Master" parent="main_menu_x_configurations"
+              action="bond_master_action"
+              sequence="8"/>
+    <menuitem id="main_menu_x_configurations_partners"
+              name="Partners" parent="main_menu_x_configurations"
+              action="base.action_partner_form"
+              sequence="9"/>
+
+
+</odoo>

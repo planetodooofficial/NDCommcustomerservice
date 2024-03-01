@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="notification_master_view_form" model="ir.ui.view">
+        <field name="name">notification.master.view.form</field>
+        <field name="model">notification.master</field>
+        <field name="arch" type="xml">
+            <form string="Notification Master">
+                <header>
+                    <button name="validate_notification" string="Validate" type="object"
+                            attrs="{'invisible': [('notification_stage', '=', 'confirm')]}"/>
+                    <button name="cancel_notification" string="Cancel" type="object"
+                            attrs="{'invisible': [('notification_stage', '=', 'draft')]}"/>
+                    <button name="edit_only_button" string="EDIT" type="object"
+                            attrs="{'invisible': ['|', ('is_edit', '=', False), ('notification_stage', '=', 'draft')]}"/>
+                    <button name="readonly_button" string="Readonly" type="object"
+                            attrs="{'invisible': ['|', ('is_edit', '=', True), ('notification_stage', '=', 'draft')]}"/>
+                    <field name="notification_stage" widget="statusbar" options="{'fold_field': 'fold'}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="notification_uid"/>
+                            <field name="is_edit" invisible="1"/>
+                            <field name="notification_description"/>
+                            <field name="notification_number"
+                                   attrs="{'readonly': [('is_edit', '=', True), ('notification_stage', '=', 'confirm')]}"/>
+                            <field name="notification_tags" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create': True, 'no_quick_create':True}"
+                                   placeholder="Tags"/>
+                            <field name="notification_date"/>
+                        </group>
+                        <group>
+                            <field name="notification_remarks"/>
+                            <field name="notification_validity"/>
+                        </group>
+                        <group colspan="10">
+                            <field name="notification_main_text" widget="html" class="oe_inline"
+                                   style="max-height: 200px; max-width: 1100px; overflow-y: scroll;"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" options="{'post_refresh':True}"
+                           help="Follow this project to automatically track the events associated to tasks and issues of this project."
+                           groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="notification_master_view_tree" model="ir.ui.view">
+        <field name="name">notification.master.view.form</field>
+        <field name="model">notification.master</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="notification_uid"/>
+                <field name="notification_description"/>
+                <field name="notification_number"/>
+                <field name="notification_date"/>
+                <field name="notification_main_text"/>
+                <field name="notification_remarks"/>
+                <field name="notification_validity"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="notification_master_action" model="ir.actions.act_window">
+        <field name="name">Notification</field>
+        <field name="res_model">notification.master</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!--    MenuItems added in Crm Configuration-->
+
+
+    <!--    <menuitem id="menu_hsn_root"-->
+    <!--              name="HSN" sequence="1"/>-->
+
+    <menuitem id="menu_notification_master_action"
+              name="Notification Master" parent="slc_custom.menu_hsn_root" action="notification_master_action"
+              sequence="3"/>
+</odoo>

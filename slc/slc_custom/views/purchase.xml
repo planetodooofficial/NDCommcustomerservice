@@ -1,0 +1,324 @@
+<odoo>
+    <record id="view_purchase_search_form" model="ir.ui.view">
+        <field name="name">view_purchase_serach_form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='user_id']" position="after">
+                <field name="boe"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_form" model="ir.ui.view">
+        <field name="name">view_purchase_form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/div/span[1]" position="replace">
+                <span class="o_form_label" attrs="{'invisible': [('state','not in',('draft','sent'))]}">System Doc. No.</span>
+            </xpath>
+            <xpath expr="//form/sheet/div/span[2]" position="replace">
+               <span class="o_form_label" attrs="{'invisible': [('state','in',('draft','sent'))]}">System Doc. No.</span>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="edit_only_button" string="EDIT" type="object" class="btn-primary"
+                        data-hotkey="q" attrs="{'invisible': [('is_edit', '=', True)]}"/>
+                <button name="readonly_button" string="READONLY" type="object" class="btn-primary"
+                        data-hotkey="q" attrs="{'invisible': [('is_edit', '=', False)]}"/>
+            </xpath>
+            <div class="oe_button_box" name="button_box">
+                <button name="cost_record_button" type="object" class="oe_stat_button"
+                        icon="fa-users" string="Cost record">
+                </button>
+                <button name="performance_record_button" type="object" class="oe_stat_button"
+                        icon="fa-list" string="Performance record">
+                </button>
+            </div>
+            <xpath expr="//form/sheet/group/group[2]/div[3]/field[@name='receipt_reminder_email']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/div[@name='date_approve']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/div[3][@name='reminder']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/div[2]/field[@name='date_planned']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/div[2][@name='date_planned_div']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/header/button[@name='action_create_invoice']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="after">
+                <field name="source_document"/>
+                <field name="exim_txn_category" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="exim_txn_subcategory_id" force_save="1" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="unit_name" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="is_edit" invisible="1"/>
+                <field name="is_vehicle_no" invisible="1"/>
+                <!--                <field name="customer_name"/>-->
+                <field name="mode" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="boe" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="boe_date" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="erp_job_number" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+<!--                <field name="awb_hbl" attrs="{'readonly': [('is_edit', '=', False)]}"/>-->
+                <field name="mawb_mbl" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="client_ref_number" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="gross_weight" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="gross_weight_uom" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="total_packages" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="max_line_sequence" invisible="1"/>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='date_order']" position="after">
+                <field name="custom_stations" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="consignor" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="country_of_consignment" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="total_duty" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="importer_name" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="foriegn_exchange_involved" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="po_bond_number_debited" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="wh_bond_number_debited" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="po_bond_debit_value" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="wh_bond_debit_value" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="provisional" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="duty_under_protest" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+                <field name="duty_under_protest_amount" attrs="{'readonly': [('is_edit', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']" position="attributes">
+                <attribute name="context">{'default_sequence': max_line_sequence}</attribute>
+            </xpath>
+
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='product_id']"
+                   position="after">
+                <field name="invoice_no" optional="hide" style="width:200%" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="be_line_no" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="lot_id" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="is_edit_relate" invisible="1"/>
+                <field name="sequence2" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="health_cess" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}" invisible="1"/>
+                <field name="nccd" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="acd" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="sad" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="g_cess" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="add" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="cvd" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="sg" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="saed" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="gsia" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="spexd" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="chcess" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="cess" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="caidc" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="eaidc" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="cusedc" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="cushec" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="ncd" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="aggr" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="tta" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="exchange_rate" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="cif_value" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="assessable_value" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="basic_duty_rate" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="total_basic_duty" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="sws_rate" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="sws_duty_amt" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="igst_rate" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="igst_amount" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="total_duty" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="country_of_origin" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="invoice_curr" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="invoice_currency" optional="hide" attrs="{'readonly': [('is_edit_relate', '=', False)]}" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='price_subtotal']"
+                   position="after">
+                <button name="view_order_line" string="Additional fields" type="object"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='name']"
+                   position="after">
+                <field name="material_code" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="tta_amount" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="invsno" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="itemsn" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='product_qty']"
+                   position="after">
+                <field name="unit" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                <field name="cth" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='name']"
+                   position="attributes">
+                <attribute name="attrs">{'readonly': [('is_edit_relate', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='product_qty']"
+                   position="attributes">
+                <attribute name="attrs">{'readonly': [('is_edit_relate', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='price_unit']"
+                   position="attributes">
+                <attribute name="attrs">{'readonly': [('is_edit_relate', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='taxes_id']"
+                   position="attributes">
+                <attribute name="attrs">{'readonly': [('is_edit_relate', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='qty_received']"
+                   position="attributes">
+                <attribute name="attrs">{'readonly': [('is_edit_relate', '=', False)]}</attribute>
+            </xpath>
+            <notebook>
+                <page string="Invoice">
+                    <field name="invoice_tab_ids">
+                        <tree editable="bottom">
+                            <field name="invsno" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="invoice_number" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="is_edit_only" invisible="1"/>
+                            <field name="invoice_date" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="supplier" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="inco_terms" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="invoice_total" string="Invoice Total(Cur)"
+                                   attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="invoice_cur" string="Invoice Currency"
+                                   attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="invoice_amount" string="Invoice Amount(INR)"
+                                   attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="related_party" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                            <field name="invoice_attachment" attrs="{'readonly': [('is_edit_only', '=', False)]}"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+            <notebook>
+                <page string="Attachment">
+                    <group>
+                        <group>
+                            <field name="bill_of_entry"/>
+                            <field name="awb"/>
+                            <field name="mawb"/>
+                        </group>
+                        <group>
+                            <field name="packing_list"/>
+                            <field name="duty_payment_challan"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+            <notebook>
+                <page string="Inventory">
+                    <field name="inventory_tab_ids">
+                        <tree editable="bottom">
+                            <field name="linked_inventory"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+            <xpath expr="//notebook/page[@name='products']/field[@name='order_line']/tree/field[@name='sequence']"
+                   position="attributes">
+                <attribute name="widget">{}</attribute>
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/field[@name='date_order']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group/group[2]/div/field[@name='date_planned']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="order_line_view_form" model="ir.ui.view">
+        <field name="name">order.line.view.form</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <form string="Order Line">
+                <sheet>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="invoice_no" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="be_line_no" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="is_edit_relate" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="sequence2" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="health_cess" attrs="{'readonly': [('is_edit_relate', '=', False)]}" invisible="1"/>
+                            <field name="nccd" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="acd" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="cvd" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="sg" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="saed" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="cess" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="caidc" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="eaidc" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="ncd" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="sad" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="g_cess" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="add" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="gsia" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="spexd" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="chcess" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="cusedc" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="cushec" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="aggr" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="tta" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <separator string=""/>
+                        <group>
+                            <field name="exchange_rate" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="cif_value" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="assessable_value" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="sws_duty_amt" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="igst_rate" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="igst_amount" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="basic_duty_rate" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="total_basic_duty" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="sws_rate" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="total_duty" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="country_of_origin" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="invoice_curr" attrs="{'readonly': [('is_edit_relate', '=', False)]}"/>
+                            <field name="invoice_currency" attrs="{'readonly': [('is_edit_relate', '=', False)]}" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Inherited Tree view of purchase to hide Dashboard(Deepak)-->
+    <record id="inherit_purchase_tree_view" model="ir.ui.view">
+        <field name="name">inherit.purchase.tree.view</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="js_class">""</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--Inherited Purchase Main Menu to change it name to EXIM-->
+    <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+        <field name="name">EXIM</field>
+    </record>
+</odoo>
